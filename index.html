@@ -17,14 +17,14 @@
 
 <meta name="generator" content="Hugo 0.62.0" />
 
-<link rel="canonical" href="https://xiaohai001.github.io/" />
+<link rel="canonical" href="https:xiaohai001.github.io/" />
 
 
 <meta property="og:title" content="My New Hugo Site" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://xiaohai001.github.io/" />
-
+<meta property="og:url" content="https:xiaohai001.github.io/" />
+<meta property="og:updated_time" content="2019-12-24T16:58:30+08:00" />
 
 
 
@@ -57,7 +57,7 @@
     <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
   </div>
   <div class="item">
-    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:\/\/xiaohai001.github.io\/'"></i>
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
   </div>
   <div class="item">
     <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
@@ -135,7 +135,74 @@
       
 <article class="ui raised card dream-card">
 
-  <a class="image" href="https://xiaohai001.github.io/post/springboot-crud/">
+  <a class="image" href="https:xiaohai001.github.io/post/blog/">
+    
+      <img src="/img/default1.jpg" alt="如何编写hugo日志" />
+    
+  </a>
+
+  <div class="content">
+    <h2 class="ui medium header">
+      <a href="https:xiaohai001.github.io/post/blog/">如何编写hugo日志</a>
+    </h2>
+    <div class="meta">
+      <p class="date">
+        
+          Tuesday, Dec 24, 2019
+        
+      </p>
+      <p class="author">
+        @
+        
+          
+        
+      </p>
+    </div>
+    <div class="description">
+      这篇文章是参照了B站UP主CodeSheep的视频经过修改而来（视频中是mac，我这边是win10）以及参照solakulo Windows如何编写hugo日志 需要的工具：   Typora:用于编写markdown文件（比如日志）
+  Git工具：用于执行命令。
+  hugo工具
+Git环境配置：   ​ 找到上面用户变量的Path，然后点击编辑
+​ 然后新建
+​ 然后添加上Git的bin的地址和git-core的地址，之后确定保存就行
+​	最后打开cmd输入git version查看是否配置成功
+hugo环境配置： 类似配置Git环境的方法。
+开始制作个人博客： 生成博客文件夹 cmd中操作语句: hugo new site myblog (生成文件夹为myblog,为你的hugo站点)
+浏览器进入：https://themes.gohugo.io/查看你想要的主题；然后进入
+​	复制下面这行代码（将主题下载到themes文件夹下）；cmd进入myblog目录：
+输入你复制好的代码；
+启动博客：
+hugo server -t m10c &ndash;buildDrafts
+新建blog.md（写日志的文本名称）博客文章：hugo new post/blog.md （最好是这样写，也可直接用markdown创建，但需要改头部）==但必须在post文件夹下==
+使用typora编写博客文章。
+title: &#34;如何编写hugo日志&#34; date: 2019-12-24T16:58:30+08:00 draft: true title中编写标题
+将个人博客部署到远端服务器（GitHub） 新建仓库；
+==Repository名字必须是自己昵称全小写（前面的）.github.io;==（这里我之前已经创建了的）
+然后点确定；
+cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts
+进入public文件夹：cd public/
+命令：git init
+添加所有：git add .
+    </div>
+  </div>
+
+  <div class="extra content">
+    <a>
+      <i class="clock icon"></i>
+      1 minute read
+    </a>
+  </div>
+</article>
+
+    </div>
+  
+    
+    <div class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    
+      
+<article class="ui raised card dream-card">
+
+  <a class="image" href="https:xiaohai001.github.io/post/springboot-crud/">
     
       <img src="/img/default3.jpg" alt="springboot-crud" />
     
@@ -143,7 +210,7 @@
 
   <div class="content">
     <h2 class="ui medium header">
-      <a href="https://xiaohai001.github.io/post/springboot-crud/">springboot-crud</a>
+      <a href="https:xiaohai001.github.io/post/springboot-crud/">springboot-crud</a>
     </h2>
     <div class="meta">
       <p class="date">
@@ -202,7 +269,7 @@ ${#dates.format(date, &lsquo;dd/MMM/yyyy HH:mm&rsquo;)}
     <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
   </div>
   <div class="item">
-    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:\/\/xiaohai001.github.io\/'"></i>
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
   </div>
   <div class="item">
     <i class="large link icon theme-switch" onclick="themeSwitch()"></i>

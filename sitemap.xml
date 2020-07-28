@@ -3,23 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://xiaohai001.github.io/categories/</loc>
+    <loc>https:xiaohai001.github.io/</loc>
+    <lastmod>2019-12-24T16:58:30+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://xiaohai001.github.io/</loc>
+    <loc>https:xiaohai001.github.io/post/</loc>
+    <lastmod>2019-12-24T16:58:30+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://xiaohai001.github.io/post/</loc>
+    <loc>https:xiaohai001.github.io/post/blog/</loc>
+    <lastmod>2019-12-24T16:58:30+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://xiaohai001.github.io/post/springboot-crud/</loc>
+    <loc>https:xiaohai001.github.io/categories/</loc>
   </url>
   
   <url>
-    <loc>https://xiaohai001.github.io/tags/</loc>
+    <loc>https:xiaohai001.github.io/post/springboot-crud/</loc>
+  </url>
+  
+  <url>
+    <loc>https:xiaohai001.github.io/tags/</loc>
   </url>
   
 </urlset>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>如何编写hugo日志 | My New Hugo Site</title>
+
+    
+
+
+
+<meta name="author" content="" />
+<meta name="description" content="" />
+
+
+
+<meta name="generator" content="Hugo 0.62.0" />
+
+<link rel="canonical" href="https:xiaohai001.github.io/post/blog/" />
+
+
+<meta property="og:title" content="如何编写hugo日志" />
+<meta property="og:description" content="这篇文章是参照了B站UP主CodeSheep的视频经过修改而来（视频中是mac，我这边是win10）以及参照solakulo Windows如何编写hugo日志 需要的工具：   Typora:用于编写markdown文件（比如日志）
+  Git工具：用于执行命令。
+  hugo工具
+Git环境配置：   ​ 找到上面用户变量的Path，然后点击编辑
+​ 然后新建
+​ 然后添加上Git的bin的地址和git-core的地址，之后确定保存就行
+​	最后打开cmd输入git version查看是否配置成功
+hugo环境配置： 类似配置Git环境的方法。
+开始制作个人博客： 生成博客文件夹 cmd中操作语句: hugo new site myblog (生成文件夹为myblog,为你的hugo站点)
+浏览器进入：https://themes.gohugo.io/查看你想要的主题；然后进入
+​	复制下面这行代码（将主题下载到themes文件夹下）；cmd进入myblog目录：
+输入你复制好的代码；
+启动博客：
+hugo server -t m10c &ndash;buildDrafts
+新建blog.md（写日志的文本名称）博客文章：hugo new post/blog.md （最好是这样写，也可直接用markdown创建，但需要改头部）==但必须在post文件夹下==
+使用typora编写博客文章。
+title: &#34;如何编写hugo日志&#34; date: 2019-12-24T16:58:30&#43;08:00 draft: true title中编写标题
+将个人博客部署到远端服务器（GitHub） 新建仓库；
+==Repository名字必须是自己昵称全小写（前面的）.github.io;==（这里我之前已经创建了的）
+然后点确定；
+cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts
+进入public文件夹：cd public/
+命令：git init
+添加所有：git add ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https:xiaohai001.github.io/post/blog/" />
+<meta property="article:published_time" content="2019-12-24T16:58:30+08:00" />
+<meta property="article:modified_time" content="2019-12-24T16:58:30+08:00" />
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="如何编写hugo日志"/>
+<meta name="twitter:description" content="这篇文章是参照了B站UP主CodeSheep的视频经过修改而来（视频中是mac，我这边是win10）以及参照solakulo Windows如何编写hugo日志 需要的工具：   Typora:用于编写markdown文件（比如日志）
+  Git工具：用于执行命令。
+  hugo工具
+Git环境配置：   ​ 找到上面用户变量的Path，然后点击编辑
+​ 然后新建
+​ 然后添加上Git的bin的地址和git-core的地址，之后确定保存就行
+​	最后打开cmd输入git version查看是否配置成功
+hugo环境配置： 类似配置Git环境的方法。
+开始制作个人博客： 生成博客文件夹 cmd中操作语句: hugo new site myblog (生成文件夹为myblog,为你的hugo站点)
+浏览器进入：https://themes.gohugo.io/查看你想要的主题；然后进入
+​	复制下面这行代码（将主题下载到themes文件夹下）；cmd进入myblog目录：
+输入你复制好的代码；
+启动博客：
+hugo server -t m10c &ndash;buildDrafts
+新建blog.md（写日志的文本名称）博客文章：hugo new post/blog.md （最好是这样写，也可直接用markdown创建，但需要改头部）==但必须在post文件夹下==
+使用typora编写博客文章。
+title: &#34;如何编写hugo日志&#34; date: 2019-12-24T16:58:30&#43;08:00 draft: true title中编写标题
+将个人博客部署到远端服务器（GitHub） 新建仓库；
+==Repository名字必须是自己昵称全小写（前面的）.github.io;==（这里我之前已经创建了的）
+然后点确定；
+cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts
+进入public文件夹：cd public/
+命令：git init
+添加所有：git add ."/>
+
+
+<link rel="stylesheet" href="/css/semantic.min.css" />
+<link rel="stylesheet" href="/css/OverlayScrollbars.min.css" />
+<link rel="stylesheet" href="/css/site.css" />
+
+
+
+
+
+    
+<link rel="stylesheet" href="/css/github-markdown.css" />
+
+  </head>
+
+  
+  <body>
+  
+    <div class="flip-container">
+      <div class="flipper">
+        <section class="front">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          
+<div class="ui centered relaxed grid dream-grid">
+  <div class="sixteen wide mobile sixteen wide tablet twelve wide computer column markdown-body dream-single">
+
+    <section class="ui top attached segment" id="dream-save-post-as-img">
+      <header style="margin-top: 0 !important;">
+        <h1 class="ui large header">
+          如何编写hugo日志
+          <div class="sub header">
+            @
+            
+              
+            
+            · Tuesday, Dec 24, 2019
+            · 1 minute read
+            · Update at Dec 24, 2019
+          </div>
+        </h1>
+      </header>
+
+      
+
+      <article style="margin-top: 2rem;"><pre><code>这篇文章是参照了B站UP主CodeSheep的视频经过修改而来（视频中是mac，我这边是win10）以及参照solakulo
+
+</code></pre><h1 id="windowshugo">Windows如何编写hugo日志</h1>
+<h2 id="heading">需要的工具：</h2>
+<ol>
+<li>
+<p>Typora:用于编写markdown文件（比如日志）</p>
+</li>
+<li>
+<p>Git工具：用于执行命令。</p>
+</li>
+<li>
+<p>hugo工具</p>
+<h2 id="git"><strong>Git环境配置：</strong></h2>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/ruAMsa53pVQWN7FLK88i5vYEhhDVKPkMl5XhkHcVJaQvX04.b6Z7WerFwfx2qcUsEpPm48w4Ta72owYKBhyZPvbMg7STH5t1dQUOAzPZ*5Y!/b&amp;bo=GgMJAwAAAAADBzE!&amp;rf=viewer_4" alt=""></p>
+</li>
+</ol>
+<p>​    找到上面用户变量的Path，然后点击编辑</p>
+<p>​    然后新建</p>
+<p>​     然后添加上Git的bin的地址和git-core的地址，之后确定保存就行</p>
+<p>​	<img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/45NBuzDIW489QBoVep5mcXFK.mHkLFrrzi1ff2a5N3DWTCwud6BSW0X1NYx42WeTkTIO97OGIHgp3dHB3vHI7H.OMLAKlEvQoPBJv.RlHyg!/b&amp;bo=TAE2AAAAAAADF0k!&amp;rf=viewer_4" alt=""></p>
+<p>最后打开cmd输入git version查看是否配置成功</p>
+<h2 id="hugo">hugo环境配置：</h2>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/45NBuzDIW489QBoVep5mcXFK.mHkLFrrzi1ff2a5N3DLbEnpsFZW3yNffDFrz1M6QOtMd3vzPlHuA1tpxdBa2c0Op.ZcIlrvRk7x1JRefi0!/b&amp;bo=*QAaAAAAAAADF9U!&amp;rf=viewer_4" alt=""></p>
+<p>类似配置Git环境的方法。</p>
+<h1 id="heading-1">开始制作个人博客：</h1>
+<p>生成博客文件夹 cmd中操作语句:   hugo new site myblog       (生成文件夹为myblog,为你的hugo站点)</p>
+<p>浏览器进入：https://themes.gohugo.io/查看你想要的主题；然后进入</p>
+<p>​	复制下面这行代码（将主题下载到themes文件夹下）；<img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/45NBuzDIW489QBoVep5mcQKW7.QhAHgtxk4zlrPDrHFSznpcWhdiIOg1bmjesWSTv9T8woJpIST4dUFdISkkCrkB6267ThoMDM510py7hNc!/b&amp;bo=7AMcAQAAAAADF8A!&amp;rf=viewer_4" alt=""></p>
+<p>cmd进入myblog目录：</p>
+<p>输入你复制好的代码；</p>
+<p>启动博客：</p>
+<p>hugo server -t m10c &ndash;buildDrafts</p>
+<p>新建blog.md（写日志的文本名称）博客文章：hugo new post/blog.md  （最好是这样写，也可直接用markdown创建，但需要改头部）==但必须在post文件夹下==</p>
+<p>使用typora编写博客文章。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">title: <span style="color:#e6db74">&#34;如何编写hugo日志&#34;</span>
+date: 2019<span style="color:#f92672">-</span>12<span style="color:#f92672">-</span>24T16<span style="color:#f92672">:</span>58<span style="color:#f92672">:</span>30<span style="color:#f92672">+</span>08<span style="color:#f92672">:</span>00
+draft: <span style="color:#66d9ef">true</span>
+</code></pre></div><p>title中编写标题</p>
+<h1 id="github">将个人博客部署到远端服务器（GitHub）</h1>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/ruAMsa53pVQWN7FLK88i5pfIfjwVauUVOHJecdOqIdtiPEmyGWckCf.Ku4nnIYv59uP2wJzVZDAjYYRIHIQicuyF**RbhAlterO.g4lQ3yY!/b&amp;bo=0wDUAAAAAAADByU!&amp;rf=viewer_4" alt=""></p>
+<p>新建仓库；</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x4WFubB/ruAMsa53pVQWN7FLK88i5s.My3UOt26YwyuLY88KjlCOjk43f1hehgI3TkqXeYIse2XuMmSPslErD2NASZ7copOYPXG6ozlgMcEsv1*ZZ48!/b&amp;bo=uQMaAwAAAAADB4E!&amp;rf=viewer_4" alt=""></p>
+<p>==Repository名字必须是自己昵称全小写（前面的）.github.io;==（这里我之前已经创建了的）</p>
+<p>然后点确定；</p>
+<p>cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts</p>
+<p>进入public文件夹：cd public/</p>
+<p>命令：git init</p>
+<p>添加所有：git add .</p>
+<p>提交命令：git commit -m &ldquo;提交上去的名字“</p>
+<p>public文件夹与本地关联命令：git remote add origin <a href="https://github.com/xiaohai002.github.io.git">https://github.com/xiaohai002.github.io.git</a></p>
+<p>推到master上：git push -u origin master</p>
+<p>输入自己的用户号和密码</p>
+<p>图片可以放到github的仓库中，然后取外链地址，这样比放在项目中提交的情况好，但是这时候github保存图片存在dns污染，</p>
+<p>解决链接：https://blog.csdn.net/qq_38232598/article/details/91346392</p>
+<h1 id="github-1">更新博客到github上</h1>
+<p>1.将写好的博客文件放在content/post文件夹下面</p>
+<p>2.cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts</p>
+<p>生成public文件</p>
+<p>3.进入public文件</p>
+<p>​		3.1）命令：git init</p>
+<p>​		3.2）添加所有：git add .</p>
+<p>​		3.3）提交命令：git commit -m &ldquo;提交上去的名字“</p>
+<p>​		3.4）public文件夹与本地关联命令：git remote add origin <a href="https://github.com/xiaohai001.github.io.git">https://github.com/xiaohai001.github.io.git</a></p>
+<p>​		3.5）推到master上：git push -u origin master</p>
+<p>​		3.6）输入自己的用户号和密码</p>
+</article>
+    </section>
+
+    <footer class="ui attached segment dream-tags">
+      
+          <a class="ui label">No Tags</a>
+      
+      <div
+        class="ui label"
+        style="float: right; cursor: pointer;"
+        onclick="savePostAsImg()">
+        <i class="save icon"></i>Save as image
+      </div>
+    </footer>
+
+    
+
+    
+    
+    
+
+  </div>
+  <div class="sixteen wide mobile sixteen wide tablet four wide computer column">
+    <article class="dream-header">
+  <section class="ui top attached center aligned segment">
+    <div class="ui small circular image">
+      
+    </div>
+
+    
+    <h1 class="ui medium header">&#39;s blog<div class="sub header" style="margin-top: 0.5rem;"></div>
+    </h1>
+    
+
+    <div class="ui horizontal list">
+      
+      <a class="item" href="/tags">
+        <i class="tags icon" title="All Tags"></i>
+      </a>
+      <a class="item" href="/categories">
+        <i class="th list icon" title="All Categories"></i>
+      </a>
+    </div>
+  </section>
+
+  
+
+  
+
+  <section class="ui attached segment header-socials">
+    <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+  </section>
+
+  <section class="ui bottom attached center aligned segment">
+    
+      <p>© 2020 My New Hugo Site</p>
+    
+
+    <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</p>
+  </section>
+</article>
+
+  </div>
+</div>
+
+        </section>
+        <section class="back">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          <div class="ui centered relaxed grid dream-grid dream-back">
+  
+  
+  
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    <article>
+      <div class="ui top attached segment">
+        <h3 class="ui header">Social Links</h3>
+      </div>
+      <div class="ui attached segment">
+        <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+      </div>
+    </article>
+  </section>
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    
+  </section>
+
+  
+    
+  
+</div>
+
+        </section>
+      </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+<script src="/js/semantic.min.js"></script>
+<script src="/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/theme.js"></script>
+
+    
+<script src="/js/html2canvas.min.js"></script>
+<script src="/js/post.js"></script>
+
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '...', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    
+  </body>
+</html>
