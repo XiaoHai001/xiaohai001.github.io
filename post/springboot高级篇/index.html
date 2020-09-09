@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title> | My New Hugo Site</title>
+
+    
+
+
+
+<meta name="author" content="" />
+<meta name="description" content="" />
+
+
+
+<meta name="generator" content="Hugo 0.62.0" />
+
+<link rel="canonical" href="https:xiaohai001.github.io/post/springboot%E9%AB%98%E7%BA%A7%E7%AF%87/" />
+
+
+<meta property="og:title" content="" />
+<meta property="og:description" content="title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30&#43;08:00draft: true一、缓存 Java Caching定义了5个核心接口，分别是CachingProvider, CacheManager, Cache, Entry
+和 Expiry。
+• CachingProvider定义了创建、配置、获取、管理和控制多个CacheManager。一个应用可
+以在运行期访问多个CachingProvider。
+• CacheManager定义了创建、配置、获取、管理和控制多个唯一命名的Cache，这些Cache
+存在于CacheManager的上下文中。一个CacheManager仅被一个CachingProvider所拥有。
+• Cache是一个类似Map的数据结构并临时存储以Key为索引的值。一个Cache仅被一个
+CacheManager所拥有。
+• Entry是一个存储在Cache中的key-value对。
+• Expiry 每一个存储在Cache中的条目有一个定义的有效期。一旦超过这个时间，条目为过期
+的状态。一旦过期，条目将不可访问、更新和删除。缓存有效期可以通过ExpiryPolicy设置。
+搭建基本环境1.导入数据库文件，创建出department和employee表2.创建javaBean封装数据3.整合Mybatis操作数据库1.配置数据源信息2.使用注解版的mybatis；1）、@MapperScan指定需要扫描的mapper接口所在的包 二、快速体验缓存步骤：1.开启基于注解的缓存2、标注缓存注解即可@CacheAble@CacheEvict@CachePut默认使用的是ConcurrentMapCacheManager==ConcurrentMapCache;将数据保存在	ConcurrentMap&lt;Object, Object&gt;缓存的注解 ==@Cacheable注解== 将方法的运行结果进行缓存，以后再要相同的数据，直接从缓存中获取，不用调用方法CacheManager管理多个Cache组件的，对缓存的真正CRUD操作在cache组件中，每一个缓存组件有组件唯一一个名字，几个属性：cacheNames/values:指定缓存的名字；将方法的返回结果放在哪个缓存中，是数组的方式，可以指定多个缓存key:缓存数据使用的key；可以用它来指定。默认使用方法参数的值 1-方法的返回值编写SPELkey = &#34;id&#34;keyGenerator:key的生成器；可以自己指定key的生成器的组件idke/keyGenerator二选一cacheManager:指定缓存管理器；或者是cacheResolver指定获取解析器condition:指定符合条件的情况下才缓存；condition = &#34;#id&gt;0&#34;unless:否定缓存；当unless指定的条件为true，方法的返回值就不会被缓存；可以获取到结果进行判断unless = &#34;#result == null&#34;sync: 是否使用异步模式@param id@return@Cacheable(cacheNames = &#34;emp&#34;,key = &#34;#root." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https:xiaohai001.github.io/post/springboot%E9%AB%98%E7%BA%A7%E7%AF%87/" />
+
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30&#43;08:00draft: true一、缓存 Java Caching定义了5个核心接口，分别是CachingProvider, CacheManager, Cache, Entry
+和 Expiry。
+• CachingProvider定义了创建、配置、获取、管理和控制多个CacheManager。一个应用可
+以在运行期访问多个CachingProvider。
+• CacheManager定义了创建、配置、获取、管理和控制多个唯一命名的Cache，这些Cache
+存在于CacheManager的上下文中。一个CacheManager仅被一个CachingProvider所拥有。
+• Cache是一个类似Map的数据结构并临时存储以Key为索引的值。一个Cache仅被一个
+CacheManager所拥有。
+• Entry是一个存储在Cache中的key-value对。
+• Expiry 每一个存储在Cache中的条目有一个定义的有效期。一旦超过这个时间，条目为过期
+的状态。一旦过期，条目将不可访问、更新和删除。缓存有效期可以通过ExpiryPolicy设置。
+搭建基本环境1.导入数据库文件，创建出department和employee表2.创建javaBean封装数据3.整合Mybatis操作数据库1.配置数据源信息2.使用注解版的mybatis；1）、@MapperScan指定需要扫描的mapper接口所在的包 二、快速体验缓存步骤：1.开启基于注解的缓存2、标注缓存注解即可@CacheAble@CacheEvict@CachePut默认使用的是ConcurrentMapCacheManager==ConcurrentMapCache;将数据保存在	ConcurrentMap&lt;Object, Object&gt;缓存的注解 ==@Cacheable注解== 将方法的运行结果进行缓存，以后再要相同的数据，直接从缓存中获取，不用调用方法CacheManager管理多个Cache组件的，对缓存的真正CRUD操作在cache组件中，每一个缓存组件有组件唯一一个名字，几个属性：cacheNames/values:指定缓存的名字；将方法的返回结果放在哪个缓存中，是数组的方式，可以指定多个缓存key:缓存数据使用的key；可以用它来指定。默认使用方法参数的值 1-方法的返回值编写SPELkey = &#34;id&#34;keyGenerator:key的生成器；可以自己指定key的生成器的组件idke/keyGenerator二选一cacheManager:指定缓存管理器；或者是cacheResolver指定获取解析器condition:指定符合条件的情况下才缓存；condition = &#34;#id&gt;0&#34;unless:否定缓存；当unless指定的条件为true，方法的返回值就不会被缓存；可以获取到结果进行判断unless = &#34;#result == null&#34;sync: 是否使用异步模式@param id@return@Cacheable(cacheNames = &#34;emp&#34;,key = &#34;#root."/>
+
+
+<link rel="stylesheet" href="/css/semantic.min.css" />
+<link rel="stylesheet" href="/css/OverlayScrollbars.min.css" />
+<link rel="stylesheet" href="/css/site.css" />
+
+
+
+
+
+    
+<link rel="stylesheet" href="/css/github-markdown.css" />
+
+  </head>
+
+  
+  <body>
+  
+    <div class="flip-container">
+      <div class="flipper">
+        <section class="front">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          
+<div class="ui centered relaxed grid dream-grid">
+  <div class="sixteen wide mobile sixteen wide tablet twelve wide computer column markdown-body dream-single">
+
+    <section class="ui top attached segment" id="dream-save-post-as-img">
+      <header style="margin-top: 0 !important;">
+        <h1 class="ui large header">
+          
+          <div class="sub header">
+            @
+            
+              
+            
+            · Monday, Jan 1, 0001
+            · 8 minute read
+            · Update at Jan 1, 0001
+          </div>
+        </h1>
+      </header>
+
+      
+
+      <article style="margin-top: 2rem;"><pre><code>title: &quot;如何编写hugo日志&quot;
+date: 2019-12-24T16:58:30+08:00
+draft: true
+</code></pre><h1 id="heading">一、缓存</h1>
+<p>Java Caching定义了5个核心接口，分别是<strong>CachingProvider</strong>, <strong>CacheManager</strong>, <strong>Cache</strong>, <strong>Entry</strong></p>
+<p>和 <strong>Expiry</strong>。</p>
+<p>• <strong>CachingProvider</strong>定义了创建、配置、获取、管理和控制多个<strong>CacheManager</strong>。一个应用可</p>
+<p>以在运行期访问多个CachingProvider。</p>
+<p>• <strong>CacheManager</strong>定义了创建、配置、获取、管理和控制多个唯一命名的<strong>Cache</strong>，这些Cache</p>
+<p>存在于CacheManager的上下文中。一个CacheManager仅被一个CachingProvider所拥有。</p>
+<p>• <strong>Cache</strong>是一个类似Map的数据结构并临时存储以Key为索引的值。一个Cache仅被一个</p>
+<p>CacheManager所拥有。</p>
+<p>• <strong>Entry</strong>是一个存储在Cache中的key-value对。</p>
+<p>• <strong>Expiry</strong> 每一个存储在Cache中的条目有一个定义的有效期。一旦超过这个时间，条目为过期</p>
+<p>的状态。一旦过期，条目将不可访问、更新和删除。缓存有效期可以通过ExpiryPolicy设置。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> 搭建基本环境
+  1<span style="color:#f92672">.</span><span style="color:#a6e22e">导入数据库文件</span><span style="color:#960050;background-color:#1e0010">，</span>创建出department和employee表
+  2<span style="color:#f92672">.</span><span style="color:#a6e22e">创建javaBean封装数据</span>
+  3<span style="color:#f92672">.</span><span style="color:#a6e22e">整合Mybatis操作数据库</span>
+  		1<span style="color:#f92672">.</span><span style="color:#a6e22e">配置数据源信息</span>
+  		2<span style="color:#f92672">.</span><span style="color:#a6e22e">使用注解版的mybatis</span><span style="color:#960050;background-color:#1e0010">；</span>
+  				1<span style="color:#960050;background-color:#1e0010">）</span><span style="color:#960050;background-color:#1e0010">、</span><span style="color:#a6e22e">@MapperScan指定需要扫描的mapper接口所在的包</span> 
+二<span style="color:#960050;background-color:#1e0010">、</span>快速体验缓存
+        步骤<span style="color:#960050;background-color:#1e0010">：</span>
+     			1<span style="color:#f92672">.</span><span style="color:#a6e22e">开启基于注解的缓存</span>
+                2<span style="color:#960050;background-color:#1e0010">、</span>标注缓存注解即可
+                <span style="color:#a6e22e">@CacheAble</span>
+                <span style="color:#a6e22e">@CacheEvict</span>
+                <span style="color:#a6e22e">@CachePut</span>
+     默认使用的是ConcurrentMapCacheManager<span style="color:#f92672">=</span><span style="color:#f92672">=</span>ConcurrentMapCache<span style="color:#f92672">;</span>将数据保存在	ConcurrentMap<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span>
+</code></pre></div><h2 id="heading-1">缓存的注解</h2>
+<h3 id="cacheable">==@Cacheable注解==</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  将方法的运行结果进行缓存<span style="color:#960050;background-color:#1e0010">，</span>以后再要相同的数据<span style="color:#960050;background-color:#1e0010">，</span>直接从缓存中获取<span style="color:#960050;background-color:#1e0010">，</span>不用调用方法
+     
+      CacheManager管理多个Cache组件的<span style="color:#960050;background-color:#1e0010">，</span>对缓存的真正CRUD操作在cache组件中<span style="color:#960050;background-color:#1e0010">，</span>每一个缓存组件有组件唯一一个名字<span style="color:#960050;background-color:#1e0010">，</span>
+      几个属性<span style="color:#960050;background-color:#1e0010">：</span>
+           cacheNames<span style="color:#f92672">/</span>values<span style="color:#f92672">:</span>指定缓存的名字<span style="color:#960050;background-color:#1e0010">；</span>将方法的返回结果放在哪个缓存中<span style="color:#960050;background-color:#1e0010">，</span>是数组的方式<span style="color:#960050;background-color:#1e0010">，</span>可以指定多个缓存
+           key<span style="color:#f92672">:</span>缓存数据使用的key<span style="color:#960050;background-color:#1e0010">；</span>可以用它来指定<span style="color:#960050;background-color:#1e0010">。</span>默认使用方法参数的值   1<span style="color:#f92672">-</span>方法的返回值
+                   编写SPEL
+                   key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;id&#34;</span>
+           keyGenerator<span style="color:#f92672">:</span>key的生成器<span style="color:#960050;background-color:#1e0010">；</span>可以自己指定key的生成器的组件id
+           ke<span style="color:#f92672">/</span>keyGenerator二选一
+           cacheManager<span style="color:#f92672">:</span>指定缓存管理器<span style="color:#960050;background-color:#1e0010">；</span>或者是cacheResolver指定获取解析器
+           condition<span style="color:#f92672">:</span>指定符合条件的情况下才缓存<span style="color:#960050;background-color:#1e0010">；</span>
+                    condition <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#id&gt;0&#34;</span>
+           unless<span style="color:#f92672">:</span>否定缓存<span style="color:#960050;background-color:#1e0010">；</span>当unless指定的条件为true<span style="color:#960050;background-color:#1e0010">，</span>方法的返回值就不会被缓存<span style="color:#960050;background-color:#1e0010">；</span>可以获取到结果进行判断
+                   unless <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result == null&#34;</span>
+           sync<span style="color:#f92672">:</span> 是否使用异步模式
+      <span style="color:#a6e22e">@param</span> id
+      <span style="color:#a6e22e">@return</span>
+     
+    <span style="color:#a6e22e">@Cacheable</span><span style="color:#f92672">(</span>cacheNames <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span>key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#root.args[0]&#34;</span><span style="color:#f92672">)</span>
+</code></pre></div><p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/ruAMsa53pVQWN7FLK88i5hvxVC8olZxKLpVZh7KvBnK6NlYQwmL8RMcPFL95nFhm*dH9aa1Ir6*RgElm*5dN6wstm1Qsirro49rD7uxBJwU!/b&amp;bo=AAWoAgAAAAADB40!&amp;rf=viewer_4" alt="image-20200807163133486"></p>
+<p>类似@Cacheable(cacheNames = &ldquo;emp&rdquo;,key = &ldquo;#root.args[0]&quot;)注解中</p>
+<p>​		key的值可以写：</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcYULj.Lg0.CiQPGixs73WuJBUDSXz0Ecapls97eB11bcFH8TJQU8TAnHOlayeAjNq.*DY3R9lXIDtmjw40dl0RE!/b&amp;bo=SQWAAgAAAAADJ8w!&amp;rf=viewer_4" alt="image-20200807163259626"></p>
+<p>原理：</p>
+<p>1.自动配置类：CacheAutoConfiguration</p>
+<p>2.缓存的配置类</p>
+<p>​				<img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcYULj.Lg0.CiQPGixs73WuJ1TMBV4EY*adEWe9JbUewJrBCH5n.7BORdxAlNm25T.WMYIxMyiXJjgXFmADqzxuk!/b&amp;bo=GgP8AQAAAAADF9Y!&amp;rf=viewer_4" alt="image-20200808084553348"></p>
+<p>默认SimpleCacheConfiguration生效。</p>
+<p>给容器中注册了一个CacheManager:ConcurrentMapCacheManager</p>
+<p>可以获取和创建ConcurrentMapCache类型的缓存组件；它的作用是将数据保存在ConcurrentMap中；</p>
+<p>运行流程：</p>
+<p>​		==1.@Cacheable:==</p>
+<p>​					方法运行之前，先去查询Cache（缓存组件），按照cacheNames指定的名字获取；</p>
+<p>​					（CacheManager先获取相应的缓存），第一次获取缓存如果没有Cache组件会自动创建，</p>
+<p>​		2.去Cache中查找缓存的内容，使用一个key,默认就是方法的参数。</p>
+<p>​			key是按照某种策略生成的。默认使用keyGenerator生成的，默认使用SimpleKeyGenerator生成key。</p>
+<p>​			SimpleKeyGenerator生成key的默认策略：</p>
+<p>​									如果没有参数：key=new SimpleKey()；</p>
+<p>​									如果有一个参数：key=参数的值</p>
+<p>​									如果有多个参数：key=new SimpleKey(params)</p>
+<p>​		3.没有查到缓存就调用目标方法，</p>
+<p>​		4.将目标方法返回的结果，放进缓存中。</p>
+<p>​	@Cacheable标注的方法执行之前先来检查缓存中有没有这个数据，默认按照参数的值作为key去查询缓存，如果没有就运行方法，并将结果放入缓存，以后再来调用就可以直接使用缓存中的数据；</p>
+<p>==核心：==</p>
+<p>​		1）、使用CacheManager【ConcurrentMapCacheManager】按照名字得到Cache【ConcurrentMapCache】组件</p>
+<p>​		2）、key是使用keyGenerator生成的，默认是SimpleKeyGenerator</p>
+<h3 id="cacheput">==@CachePut:既调用方法，又更新缓存数据；==</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">      <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">:</span>既调用方法<span style="color:#960050;background-color:#1e0010">，</span>又更新缓存数据<span style="color:#960050;background-color:#1e0010">；</span>
+      修改了数据库的某个数据<span style="color:#960050;background-color:#1e0010">，</span>同时更新缓存<span style="color:#960050;background-color:#1e0010">，</span>
+      运行时机<span style="color:#960050;background-color:#1e0010">：</span>
+           1<span style="color:#960050;background-color:#1e0010">、</span>先调用目标方法
+           2<span style="color:#960050;background-color:#1e0010">、</span>将目标方法的结果缓存起来
+      测试步骤
+           1<span style="color:#960050;background-color:#1e0010">、</span>查询1号员工<span style="color:#960050;background-color:#1e0010">，</span>查到的结果会放在缓存中
+                   key<span style="color:#f92672">:</span>1     value<span style="color:#f92672">:</span> lastName<span style="color:#f92672">:</span>张三
+           2<span style="color:#960050;background-color:#1e0010">、</span>以后查询还是之前的结果
+           3<span style="color:#960050;background-color:#1e0010">、</span>更新一号员工<span style="color:#960050;background-color:#1e0010">【</span>lastName<span style="color:#960050;background-color:#1e0010">：</span>zhangsan<span style="color:#960050;background-color:#1e0010">；</span>gender<span style="color:#960050;background-color:#1e0010">：</span>0<span style="color:#960050;background-color:#1e0010">】</span>
+                   将方法的返回值也放进缓存了<span style="color:#960050;background-color:#1e0010">；</span>
+                   key<span style="color:#f92672">:</span>传入的employee对象   值<span style="color:#960050;background-color:#1e0010">：</span>返回的employee对象<span style="color:#960050;background-color:#1e0010">；</span>
+           4<span style="color:#960050;background-color:#1e0010">、</span>查询1号员工<span style="color:#960050;background-color:#1e0010">？</span>
+                   应该是更新后的员工
+                           key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#employee.id&#34;</span><span style="color:#f92672">:</span>使用传入的参数的员工id<span style="color:#960050;background-color:#1e0010">；</span>
+                           key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result.id&#34;</span><span style="color:#f92672">:</span>使用返回后的id
+                               <span style="color:#a6e22e">@Cacheable的key是不能用</span><span style="color:#960050;background-color:#1e0010">#</span>result
+                   为什么是没更新前的<span style="color:#960050;background-color:#1e0010">？</span><span style="color:#960050;background-color:#1e0010">【</span>1号员工没有在缓存中更新<span style="color:#960050;background-color:#1e0010">】</span>
+   
+    <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span>key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#employee.id&#34;</span><span style="color:#f92672">)</span>
+</code></pre></div><h3 id="cacheevict">==@CacheEvict:缓存清除==</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#a6e22e">@CacheEvict</span><span style="color:#f92672">:</span>缓存清除
+           key<span style="color:#f92672">:</span>指定要清除的数据
+           allEntries <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">:</span> 指定清除这个缓存中所有数据
+           beforeInvocation <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">:</span> 缓存的清除是否在方法之前执行
+                   默认代表是在方法执行之后执行<span style="color:#f92672">,</span>如果出现异常缓存就不会清除
+     
+            beforeInvocation <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">:</span>
+                   代表清除缓存操作是在方法运行之前<span style="color:#960050;background-color:#1e0010">，</span>无论方法是否出现异常<span style="color:#960050;background-color:#1e0010">，</span>缓存都清除
+     
+    <span style="color:#a6e22e">@CacheEvict</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span>key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#id&#34;</span><span style="color:#f92672">)</span>   <span style="color:#75715e">//key = &#34;#id&#34;:默认参数是方法里面的参数
+</span></code></pre></div><h3 id="caching--">==@Caching  定义复杂的缓存规则==</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> 
+    <span style="color:#a6e22e">@Caching</span><span style="color:#f92672">(</span>
+            cacheable <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+                    <span style="color:#a6e22e">@Cacheable</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span>key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#lastName&#34;</span><span style="color:#f92672">)</span>
+            <span style="color:#f92672">}</span><span style="color:#f92672">,</span>
+            put <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+                    <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span>key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result.id&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">,</span>
+                    <span style="color:#a6e22e">@CachePut</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;emp&#34;</span><span style="color:#f92672">,</span> key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;#result.email&#34;</span><span style="color:#f92672">)</span>
+            <span style="color:#f92672">}</span>
+    <span style="color:#f92672">)</span>
+</code></pre></div><h3 id="cacheconfigcachenames--emp">==@CacheConfig(cacheNames = &ldquo;emp&rdquo;)//抽取缓存的公共配置==</h3>
+<p>开发中使用缓存中间件；redis、memcached、ehcache;</p>
+<h2 id="redis">==三、整合redis作为缓存==</h2>
+<p>Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。
+1.安装Redis：使用docker安装，可修改配置文件用镜像加速（我用的是网易的镜像加速）
+2.引入redis的starter</p>
+<pre><code>   ### 3.配置redis
+</code></pre>
+<p>保存对象时实现redisTemplate默认的序列化规则的辅助类</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyRedisConfig</span> <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Bean</span>
+    <span style="color:#66d9ef">public</span> RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">empRedisTemplate</span><span style="color:#f92672">(</span>RedisConnectionFactory redisConnectionFactory<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UnknownHostException <span style="color:#f92672">{</span>
+        RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span> template <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setConnectionFactory</span><span style="color:#f92672">(</span>redisConnectionFactory<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> serializer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>Employee<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setDefaultSerializer</span><span style="color:#f92672">(</span>serializer<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> template<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">	<span style="color:#a6e22e">@Autowired</span>
+	EmployeeMapper employeeMapper<span style="color:#f92672">;</span>
+
+	<span style="color:#a6e22e">@Autowired</span>
+	StringRedisTemplate stringRedisTemplate<span style="color:#f92672">;</span>  <span style="color:#75715e">//操作k-v字符串的
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">@Autowired</span>
+	RedisTemplate redisTemplate<span style="color:#f92672">;</span>   <span style="color:#75715e">//k-v都是对象的
+</span><span style="color:#75715e"></span>
+	<span style="color:#a6e22e">@Autowired</span>
+	RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span>Employee<span style="color:#f92672">&gt;</span> empRedisTemplate<span style="color:#f92672">;</span>
+
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	 * Redis常见的五大数据类型
+</span><span style="color:#75715e">	 * String (字符串)、list（列表）、set（集合）、Hash（散列）、Zset（有序集合）
+</span><span style="color:#75715e">	 * stringRedisTemplate.opsForValue();{String（字符串）}
+</span><span style="color:#75715e">	 * stringRedisTemplate.opsForHash();{Hash（散列）}
+</span><span style="color:#75715e">	 * stringRedisTemplate.opsForList();{list（列表）}
+</span><span style="color:#75715e">	 * stringRedisTemplate.opsForSet();{set（集合）}
+</span><span style="color:#75715e">	 * stringRedisTemplate.opsForZSet();{Zset（有序集合）}
+</span><span style="color:#75715e">	 */</span>
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test01</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		<span style="color:#75715e">//给redis保存一个数据
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//stringRedisTemplate.opsForValue().append(&#34;msg&#34;,&#34;hello&#34;);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		String msg = stringRedisTemplate.opsForValue().get(&#34;msg&#34;);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		System.out.println(msg);
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">//		stringRedisTemplate.opsForList().leftPush(&#34;mylist&#34;,&#34;1&#34;);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		stringRedisTemplate.opsForList().leftPush(&#34;mylist&#34;,&#34;2&#34;);
+</span><span style="color:#75715e"></span>	<span style="color:#f92672">}</span>
+	<span style="color:#75715e">//测试保存对象
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test02</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		Employee empById <span style="color:#f92672">=</span> employeeMapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getEmpById</span><span style="color:#f92672">(</span>1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//默认如果保存对象，使用jdk序列化机构，序列化后的数据保存到redis中
+</span><span style="color:#75715e"></span>		redisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;emp-01&#34;</span><span style="color:#f92672">,</span>empById<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//1.将数据以json的方式保存
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//(1)自己将对象转化为json
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//(2)redisTemplate默认的序列化规则
+</span><span style="color:#75715e"></span>		empRedisTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">opsForValue</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;emp-01&#34;</span><span style="color:#f92672">,</span>empById<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="4">4.测试缓存</h3>
+<pre><code>        原理：CacheManager==Cache 缓存组件来实际给缓存中CRUD存取数据
+        1).引入redis的starter，容器中保存的是RedisCacheManager;
+        2).	RedisCacheManager:帮我们创建RedisCache 来作为缓存组件；RedisCache通过操作redis缓存数据的
+        3）.默认保存数据 k-v 都是Object；利用序列化保存；如何保存为json
+                1.引入了redis的starter，cacheManager变为RedisCacheManager；
+                2.默认创建的RedisCacheManager 操作redis的时候使用的是	RedisTemplate&lt;Object, Object&gt;
+                3.RedisTemplate&lt;Object, Object&gt;是 默认使用jdk的序列化机制
+        4）.自定义CacheManager；
+</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> 	<span style="color:#a6e22e">@Autowired</span>
+    DepartmentMapper departmentMapper<span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@Qualifier</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;deptCacheManager&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#a6e22e">@Autowired</span>
+    RedisCacheManager deptCacheManager<span style="color:#f92672">;</span>  	 
+	 <span style="color:#f92672">*</span> 缓存的数据能存入redis<span style="color:#960050;background-color:#1e0010">；</span>
+     <span style="color:#f92672">*</span> 当从缓存中获取时<span style="color:#960050;background-color:#1e0010">，</span>就不能反序列化回来
+     <span style="color:#f92672">*</span> 存的是deptjson数据<span style="color:#960050;background-color:#1e0010">，</span>cacheManager默认使用RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span>操作redis
+     <span style="color:#f92672">*</span>
+     <span style="color:#f92672">*</span> <span style="color:#a6e22e">@param</span> id
+     <span style="color:#f92672">*</span> <span style="color:#a6e22e">@return</span>
+  
+<span style="color:#75715e">//    @Cacheable(cacheNames = &#34;dept&#34;,cacheManager = &#34;deptCacheManager&#34;)
+</span><span style="color:#75715e"></span><span style="color:#75715e">//    public Department getDeptById(Integer id){
+</span><span style="color:#75715e"></span><span style="color:#75715e">//        System.out.println(&#34;查询部门：&#34;+id);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//        Department department = departmentMapper.getDeptById(id);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//        return department;
+</span><span style="color:#75715e"></span><span style="color:#75715e">//    }
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//使用缓存管理器得到缓存，进行api调用
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> Department <span style="color:#a6e22e">getDeptById</span><span style="color:#f92672">(</span>Integer id<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;查询部门：&#34;</span><span style="color:#f92672">+</span>id<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Department department <span style="color:#f92672">=</span> departmentMapper<span style="color:#f92672">.</span><span style="color:#a6e22e">getDeptById</span><span style="color:#f92672">(</span>id<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Cache dept <span style="color:#f92672">=</span> deptCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dept&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        dept<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dept:1&#34;</span><span style="color:#f92672">,</span>department<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> department<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#a6e22e">@Bean</span>
+    <span style="color:#66d9ef">public</span> RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">empRedisTemplate</span><span style="color:#f92672">(</span>RedisConnectionFactory redisConnectionFactory<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UnknownHostException <span style="color:#f92672">{</span>
+        RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span> template <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setConnectionFactory</span><span style="color:#f92672">(</span>redisConnectionFactory<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span> serializer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Employee<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>Employee<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setDefaultSerializer</span><span style="color:#f92672">(</span>serializer<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> template<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#a6e22e">@Bean</span>
+    <span style="color:#66d9ef">public</span> RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Department<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">deptRedisTemplate</span><span style="color:#f92672">(</span>RedisConnectionFactory redisConnectionFactory<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UnknownHostException <span style="color:#f92672">{</span>
+        RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Department<span style="color:#f92672">&gt;</span> template <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setConnectionFactory</span><span style="color:#f92672">(</span>redisConnectionFactory<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Department<span style="color:#f92672">&gt;</span> serializer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Jackson2JsonRedisSerializer<span style="color:#f92672">&lt;</span>Department<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>Department<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        template<span style="color:#f92672">.</span><span style="color:#a6e22e">setDefaultSerializer</span><span style="color:#f92672">(</span>serializer<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> template<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">//CacheManagerCustomizers可以制定缓存的一些规则
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Primary</span>  <span style="color:#75715e">//将某个缓存管理器作为默认的
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Bean</span>
+    <span style="color:#66d9ef">public</span> RedisCacheManager <span style="color:#a6e22e">employeeCacheManager</span><span style="color:#f92672">(</span>RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Employee<span style="color:#f92672">&gt;</span> empRedisTemplate<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        RedisCacheManager cacheManager <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisCacheManager<span style="color:#f92672">(</span>empRedisTemplate<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">//key多了一个前缀
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//使用前缀，默认会将CacheName作为key的前缀
+</span><span style="color:#75715e"></span>        cacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">setUsePrefix</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> cacheManager<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Bean</span>
+    <span style="color:#66d9ef">public</span> RedisCacheManager <span style="color:#a6e22e">deptCacheManager</span><span style="color:#f92672">(</span>RedisTemplate<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Department<span style="color:#f92672">&gt;</span> deptRedisTemplate<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        RedisCacheManager cacheManager <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisCacheManager<span style="color:#f92672">(</span>deptRedisTemplate<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">//key多了一个前缀
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//使用前缀，默认会将CacheName作为key的前缀
+</span><span style="color:#75715e"></span>        cacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">setUsePrefix</span><span style="color:#f92672">(</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+        <span style="color:#66d9ef">return</span> cacheManager<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="spring-boot">二、Spring Boot与消息</h1>
+<p>JMS、AMQP、RabbitMQ</p>
+<p>1.大多应用中，可通过消息服务中间件来提升系统异步通信、扩展解耦能力
+2.消息服务中两个重要概念：
+==消息代理（message broker）==和==目的地（destination）==
+当消息发送者发送消息以后，将由消息代理接管，消息代理保证消息传递到指定目的地。
+3.消息队列主要有两种形式的目的地
+1).==队列（queue）==：点对点消息通信（point-to-point）
+2).==主题（topic）==：发布（publish）/订阅（subscribe）消息通信</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcUHsaFjl.G2YhRiF0WQ3tXiARhTcqQF1xjd*OXl8TGuifFjYgTSy6RGHJDYD.Ul01BKeo84snp5ikSIGW2CnVEY!/b&amp;bo=lwNzAgAAAAADF9c!&amp;rf=viewer_4" alt="image-20200811092432981"></p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcUHsaFjl.G2YhRiF0WQ3tXhBRUTeEhtHs*4WUjyb6spTQl6sElItGmxNyIr8x*pZt8lE6d2edowYvnyz846mfNY!/b&amp;bo=zwQQAgAAAAADF.s!&amp;rf=viewer_4" alt="image-20200811093545834"></p>
+<p>4.点对点式：
+消息发送者发送消息，消息代理将其放入一个队列中，消息接收者从队列中获取消息内容，消息读取后被移出队列
+消息只有唯一的发送者和接受者，但并不是说只能有一个接收者</p>
+<p>5.发布订阅式：
+发送者（发布者）发送消息到主题，多个接收者（订阅者）监听（订阅）这个主题，那么就会在消息到达时同时收到消息</p>
+<p>6.JMS（Java Message Service）JAVA消息服务：
+基于JVM消息代理的规范。ActiveMQ、HornetMQ是JMS实现</p>
+<p>7.AMQP（Advanced Message Queuing Protocol）
+高级消息队列协议，也是一个消息代理的规范，兼容JMS
+RabbitMQ是AMQP的实现</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcUHsaFjl.G2YhRiF0WQ3tXh7QNGMlRwO6nX9ArAeNUO4OeLCRVVcSiqwb1F3EtR2MoX8OGCyCbzMqMzZTbdRf4k!/b&amp;bo=4QRVAgAAAAADF4A!&amp;rf=viewer_4" alt="image-20200811093321092"></p>
+<p>Spring支持
+spring-jms提供了对JMS的支持
+spring-rabbit提供了对AMQP的支持
+需要ConnectionFactory的实现来连接消息代理
+提供JmsTemplate、RabbitTemplate来发送消息
+@JmsListener（JMS）、@RabbitListener（AMQP）注解在方法上监听消息代理发布的消息
+@EnableJms、@EnableRabbit开启支持</p>
+<p>Spring Boot自动配置
+JmsAutoConfiguration
+RabbitAutoConfiguration</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcUHsaFjl.G2YhRiF0WQ3tXhAYGNC2jo3ctJ1DzeAhGcWWRZiwWodZVL.Eh6lMjxk28oIqQjWs2ang89.BoZEX8E!/b&amp;bo=TwP3AAAAAAADF4k!&amp;rf=viewer_4" alt="image-20200811213155540"></p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcReZ6U*hFPt9eYDM4NHxizXYK*8P.E*SqyiyklbZMaJq16l6MUZhj2VcADjQ9Fx4f4Kfe.*rVOQSGdl2RfPeGRo!/b&amp;bo=kQQzAQAAAAADJ6U!&amp;rf=viewer_4" alt="image-20200811213825108"></p>
+<h2 id="1rabbitmq">1.安装rabbitmq：</h2>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcReZ6U*hFPt9eYDM4NHxizXWYsIGfqRwoPfeLhohgZhcznG1a6nK0SnlPcG5m85vn9*vkq70NJb2pz.3iGMzNNk!/b&amp;bo=bgdWAwAAAAADNy4!&amp;rf=viewer_4" alt="image-20200817165129915"></p>
+<h2 id="2-rabbitmq">2. 测试rabbitmq：</h2>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcReZ6U*hFPt9eYDM4NHxizXBKnw1RCyKh*ThxqHYnr*u*ErIbwEJvzpiUzFLw51UxW5XxOx4x2E0usTbQfqckSA!/b&amp;bo=GgUfAgAAAAADFzA!&amp;rf=viewer_4" alt="image-20200817164949276"></p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcReZ6U*hFPt9eYDM4NHxizWu0ybwI9mJYbGeeOrm8.aid4LOklW0.YxCS2971163ZY0oy5y97DCUrIXrjjjJ364!/b&amp;bo=TgdmAwAAAAADFx4!&amp;rf=viewer_4" alt="image-20200817165347114"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">*</span> 自动配置
+ <span style="color:#f92672">*</span> 		1<span style="color:#f92672">.</span><span style="color:#a6e22e">RabbitAutoConfiguration</span>
+ <span style="color:#f92672">*</span> 		2<span style="color:#f92672">.</span><span style="color:#a6e22e">有自动配置了连接工厂ConnectionFactory</span><span style="color:#f92672">;</span>
+ <span style="color:#f92672">*</span> 		3<span style="color:#f92672">.</span><span style="color:#a6e22e">RabbitProperties</span> 封装了 RabbitMQ的配置
+ <span style="color:#f92672">*</span> 		4<span style="color:#f92672">.</span><span style="color:#a6e22e">RabbitTemplate</span> <span style="color:#f92672">:</span> 给RabbitMQ发送和接受信息
+ <span style="color:#f92672">*</span> 		5<span style="color:#f92672">.</span><span style="color:#a6e22e">AmqpAdmin</span> <span style="color:#f92672">:</span> RabbitMQ系统管理功能组件
+     		AmqpAdmin<span style="color:#f92672">:</span> 创建和删除Queue<span style="color:#f92672">,</span>exchange<span style="color:#f92672">,</span>Binding	
+     	6<span style="color:#f92672">.</span><span style="color:#a6e22e">EnableRabbit</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">@RabbitListener</span> 监听消息队列的内容
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Autowired</span>
+	RabbitTemplate rabbitTemplate<span style="color:#f92672">;</span>
+
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	 * 1.单播（点对点）
+</span><span style="color:#75715e">	 */</span>
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextLoads</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+		<span style="color:#75715e">//message需要组件构造一个；定义消息体内容和消息头
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//rabbitTemplate.send(exchage,routeKey,message);
+</span><span style="color:#75715e"></span>
+		<span style="color:#75715e">//object默认当成消息体，只需要传入要发送的对象，自动序列化发送rabbitmq；
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//rabbitTemplate.convertAndSend(exchage,routeKey,object);
+</span><span style="color:#75715e"></span>
+		Map<span style="color:#f92672">&lt;</span>String <span style="color:#f92672">,</span>Object<span style="color:#f92672">&gt;</span>map<span style="color:#f92672">=</span><span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;msg&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;这是第一个消息&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		map<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;data&#34;</span><span style="color:#f92672">,</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;helloworld&#34;</span><span style="color:#f92672">,</span>123<span style="color:#f92672">,</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//对象被默认序列化以后发送出去
+</span><span style="color:#75715e"></span>		rabbitTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">convertAndSend</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;exchange.direct&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;atguigu.news&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> Book<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;西游记&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;吴承恩&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">receive</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		Object o <span style="color:#f92672">=</span> rabbitTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">receiveAndConvert</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;atguigu.news&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>o<span style="color:#f92672">.</span><span style="color:#a6e22e">getClass</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>o<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+	<span style="color:#75715e">/**
+</span><span style="color:#75715e">	 * 广播
+</span><span style="color:#75715e">	 */</span>
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">sendMsg</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		
+		rabbitTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">convertAndSend</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;exchange.fanout&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> Book<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;三国演义&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;罗贯中&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="spring-boot-1">三、Spring Boot与检索</h1>
+<p>ElsaticSearch</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#f92672">*</span> SpringBoot默认支持两种技术来和ES交互<span style="color:#960050;background-color:#1e0010">，</span>
+ <span style="color:#f92672">*</span> 	1<span style="color:#f92672">.</span><span style="color:#a6e22e">Jest</span> <span style="color:#f92672">(</span>默认不生效<span style="color:#f92672">)</span>
+ <span style="color:#f92672">*</span> 		需要导入jest的工具包<span style="color:#f92672">(</span>io<span style="color:#f92672">.</span><span style="color:#a6e22e">searchbox</span><span style="color:#f92672">.</span><span style="color:#a6e22e">client</span><span style="color:#f92672">.</span><span style="color:#a6e22e">JestClient</span><span style="color:#f92672">)</span>
+ <span style="color:#f92672">*</span> 	2<span style="color:#f92672">.</span><span style="color:#a6e22e">SpringData</span> ElasticSearch<span style="color:#960050;background-color:#1e0010">【</span>ES版本有可能不合适<span style="color:#960050;background-color:#1e0010">】</span>
+ <span style="color:#f92672">*</span> 		版本适配说明<span style="color:#960050;background-color:#1e0010">：</span>https<span style="color:#f92672">:</span><span style="color:#75715e">//github.com/spring-projects/spring-data-elasticsearch
+</span><span style="color:#75715e"></span> <span style="color:#f92672">*</span> 		如果版本不适配<span style="color:#960050;background-color:#1e0010">：</span>
+ <span style="color:#f92672">*</span> 			1<span style="color:#960050;background-color:#1e0010">）</span>升级SpringBoot版本
+ <span style="color:#f92672">*</span> 			2<span style="color:#960050;background-color:#1e0010">）</span>安装对应版本的ES
+ <span style="color:#f92672">*</span> 		1<span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Client</span> 结点信息clusterNodes<span style="color:#f92672">;</span>clusterName
+ <span style="color:#f92672">*</span> 		2<span style="color:#f92672">)</span><span style="color:#f92672">.</span>	ElasticsearchTemplate 操作es
+ <span style="color:#f92672">*</span> 		3<span style="color:#960050;background-color:#1e0010">）</span><span style="color:#f92672">.</span><span style="color:#a6e22e">编写一个ElasticsearchRepository</span>	的子接口来操作ES<span style="color:#960050;background-color:#1e0010">；</span>
+ <span style="color:#f92672">*</span> 	两种用法<span style="color:#960050;background-color:#1e0010">：</span>https<span style="color:#f92672">:</span><span style="color:#75715e">//github.com/spring-projects/spring-data-elasticsearch
+</span><span style="color:#75715e"></span> <span style="color:#f92672">*</span> 		1<span style="color:#960050;background-color:#1e0010">）</span>编写一个ElasticsearchRepository
+</code></pre></div><p>jar包：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span>SpringBoot默认使用springdata ElasticSearch模块进行操作<span style="color:#f92672">-</span><span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>data<span style="color:#f92672">-</span>elasticsearch<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span> https<span style="color:#f92672">:</span><span style="color:#75715e">//mvnrepository.com/artifact/io.searchbox/jest --&gt;
+</span><span style="color:#75715e"></span>		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>io<span style="color:#f92672">.</span><span style="color:#a6e22e">searchbox</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>jest<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>5<span style="color:#f92672">.</span><span style="color:#a6e22e">3</span><span style="color:#f92672">.</span><span style="color:#a6e22e">3</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+</code></pre></div><p>配置文件：</p>
+<p>根据你的elasticsearch端口号和name来写</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">spring<span style="color:#f92672">.</span><span style="color:#a6e22e">elasticsearch</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jest</span><span style="color:#f92672">.</span><span style="color:#a6e22e">uris</span><span style="color:#f92672">=</span>http<span style="color:#f92672">:</span><span style="color:#75715e">//192.168.43.91:9200
+</span><span style="color:#75715e"></span>
+spring<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">.</span><span style="color:#a6e22e">elasticsearch</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cluster</span><span style="color:#f92672">-</span>name<span style="color:#f92672">=</span>elasticsearch
+spring<span style="color:#f92672">.</span><span style="color:#a6e22e">data</span><span style="color:#f92672">.</span><span style="color:#a6e22e">elasticsearch</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cluster</span><span style="color:#f92672">-</span>nodes<span style="color:#f92672">=</span>192<span style="color:#f92672">.</span><span style="color:#a6e22e">168</span><span style="color:#f92672">.</span><span style="color:#a6e22e">43</span><span style="color:#f92672">.</span><span style="color:#a6e22e">91</span><span style="color:#f92672">:</span>9300
+</code></pre></div><p>测试：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test02</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+<span style="color:#75715e">//		Book book = new Book();
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		book.setId(1);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		book.setBookName(&#34;西游记&#34;);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		book.setAuthor(&#34;吴承恩&#34;);
+</span><span style="color:#75715e"></span><span style="color:#75715e">//		bookRepository.index(book);
+</span><span style="color:#75715e"></span>
+		<span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Book book <span style="color:#f92672">:</span> bookRepository<span style="color:#f92672">.</span><span style="color:#a6e22e">findBookByBookNameLike</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;游&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+			System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>book<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span>
+		<span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextLoads</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+		<span style="color:#75715e">//1.给Es中索引（保存）一个文档；
+</span><span style="color:#75715e"></span>		Article article <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Article<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		article<span style="color:#f92672">.</span><span style="color:#a6e22e">setId</span><span style="color:#f92672">(</span>1<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		article<span style="color:#f92672">.</span><span style="color:#a6e22e">setTitle</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;好消息&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		article<span style="color:#f92672">.</span><span style="color:#a6e22e">setAuthor</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;张三&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		article<span style="color:#f92672">.</span><span style="color:#a6e22e">setContent</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;hello world&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//构建一个索引功能
+</span><span style="color:#75715e"></span>		Index index <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Index<span style="color:#f92672">.</span><span style="color:#a6e22e">Builder</span><span style="color:#f92672">(</span>article<span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">index</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;atguigu&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;news&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+			<span style="color:#75715e">//执行
+</span><span style="color:#75715e"></span>			jestClient<span style="color:#f92672">.</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">(</span>index<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+			e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span>
+
+	<span style="color:#f92672">}</span>
+	<span style="color:#75715e">//测试搜索
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">search</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		String json<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;{\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;    \&#34;query\&#34; : {\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;        \&#34;match\&#34; : {\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;            \&#34;content\&#34; : \&#34;helloworld\&#34;\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;        }\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;    }\n&#34;</span> <span style="color:#f92672">+</span>
+				<span style="color:#e6db74">&#34;}&#34;</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//构建搜索功能
+</span><span style="color:#75715e"></span>		Search search <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Search<span style="color:#f92672">.</span><span style="color:#a6e22e">Builder</span><span style="color:#f92672">(</span>json<span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">addIndex</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;atguigu&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">addType</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;news&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		<span style="color:#75715e">//执行
+</span><span style="color:#75715e"></span>		<span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+			SearchResult result <span style="color:#f92672">=</span> jestClient<span style="color:#f92672">.</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">(</span>search<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+			System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>result<span style="color:#f92672">.</span><span style="color:#a6e22e">getJsonString</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+			e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#f92672">}</span>
+
+	<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">BookRepository</span> <span style="color:#66d9ef">extends</span> ElasticsearchRepository<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">,</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#75715e">//参照：https://docs.spring.io/spring-data/elasticsearch/docs/3.1.19.RELEASE/reference/html/
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span>findBookByBookNameLike<span style="color:#f92672">(</span>String bookName<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Document</span><span style="color:#f92672">(</span>indexName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;atguigu&#34;</span><span style="color:#f92672">,</span>type <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;book&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Book</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> Integer id<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String bookName<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String author<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> Integer <span style="color:#a6e22e">getId</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> id<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setId</span><span style="color:#f92672">(</span>Integer id<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> id<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getBookName</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> bookName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setBookName</span><span style="color:#f92672">(</span>String bookName<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">bookName</span> <span style="color:#f92672">=</span> bookName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> author<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setAuthor</span><span style="color:#f92672">(</span>String author<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">author</span> <span style="color:#f92672">=</span> author<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Book{&#34;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;id=&#34;</span> <span style="color:#f92672">+</span> id <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, bookName=&#39;&#34;</span> <span style="color:#f92672">+</span> bookName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, author=&#39;&#34;</span> <span style="color:#f92672">+</span> author <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#39;}&#39;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Article</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@JestId</span>
+    <span style="color:#66d9ef">private</span> Integer id<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String author<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String title<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> String content<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> Integer <span style="color:#a6e22e">getId</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> id<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setId</span><span style="color:#f92672">(</span>Integer id<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> id<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> author<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setAuthor</span><span style="color:#f92672">(</span>String author<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">author</span> <span style="color:#f92672">=</span> author<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getTitle</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> title<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setTitle</span><span style="color:#f92672">(</span>String title<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">title</span> <span style="color:#f92672">=</span> title<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getContent</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> content<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setContent</span><span style="color:#f92672">(</span>String content<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">content</span> <span style="color:#f92672">=</span> content<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="spring-boot-2">Spring Boot与任务</h1>
+<p>异步任务、定时任务、邮件任务</p>
+<h2 id="heading-2">异步任务</h2>
+<p>​		在Java应用中，绝大多数情况下都是通过同步的方式来实现交互处理的；但是在处理与第三方系统交互的时候，容易造成响应迟缓的情况，之前大部分都是使用多线程来完成此类任务，其实，在Spring 3.x之后，就已经内置了@Async来完美解决这个问题。</p>
+<p>==两个注解：==@EnableAysnc、@Aysnc</p>
+<p>主程序中</p>
+<p>@EnableAsync  //开启异步注解</p>
+<pre><code>//告诉Spring这是一个异步方法
+    @Async
+    public void hello(){
+</code></pre><h2 id="heading-3">定时任务</h2>
+<p>​		项目开发中经常需要执行一些定时任务，比如需要在每天凌晨时候，分析一次前一天的日志信息。Spring为我们提供了异步执行任务调度的方式，提供TaskExecutor 、TaskScheduler 接口。</p>
+<p>==两个注解：==@EnableScheduling、@Scheduled</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcZfJK1ONLRhs8HbD9gADX3jBLCY8Az6cIn5gI1kVgJRmYAjiqwDcSzFqBLVOv3dO8Rbi5EByRWGgGQVIPRQzzoc!/b&amp;bo=8ANAAQAAAAADF4A!&amp;rf=viewer_4" alt="image-20200820105216205"></p>
+<p>主程序中：</p>
+<p>@EnableScheduling  //开启基于注解的定时任务</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * second(秒), minute（分）, hour（时）, day of month（日）, month（月）, day of week（周几）.
+</span><span style="color:#75715e">     * 0 * * * * MON-FRI
+</span><span style="color:#75715e">     *  【0 0/5 14,18 * * ?】 每天14点整，和18点整，每隔5分钟执行一次
+</span><span style="color:#75715e">     *  【0 15 10 ? * 1-6】 每个月的周一至周六10:15分执行一次
+</span><span style="color:#75715e">     *  【0 0 2 ? * 6L】每个月的最后一个周六凌晨2点执行一次
+</span><span style="color:#75715e">     *  【0 0 2 LW * ?】每个月的最后一个工作日凌晨2点执行一次
+</span><span style="color:#75715e">     *  【0 0 2-4 ? * 1#1】每个月的第一个周一凌晨2点到4点期间，每个整点都执行一次；
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#75715e">//@Scheduled(cron = &#34;0 * * * * MON-FRI&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//@Scheduled(cron = &#34;0,1,2,3,4 * * * * MON-FRI&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//@Scheduled(cron = &#34;0-4 * * * * MON-FRI&#34;)
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Scheduled</span><span style="color:#f92672">(</span>cron <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0/4 * * * * MON-FRI&#34;</span><span style="color:#f92672">)</span><span style="color:#75715e">//每4秒运行一次，周一到周五
+</span></code></pre></div><h1 id="heading-4">四、邮件任务</h1>
+<h3 id="1spring-boot-starter-mail">1.邮件发送需要引入spring-boot-starter-mail</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>mail<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+</code></pre></div><h3 id="2spring-boot-mailsenderautoconfiguration">2.Spring Boot 自动配置MailSenderAutoConfiguration</h3>
+<h3 id="3mailpropertiesapplicationyml">3.定义MailProperties内容，配置在application.yml中</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">spring<span style="color:#f92672">.</span><span style="color:#a6e22e">mail</span><span style="color:#f92672">.</span><span style="color:#a6e22e">username</span><span style="color:#f92672">=</span>2634984457<span style="color:#a6e22e">@qq.com</span>
+spring<span style="color:#f92672">.</span><span style="color:#a6e22e">mail</span><span style="color:#f92672">.</span><span style="color:#a6e22e">password</span><span style="color:#f92672">=</span>izjawkfciscaecgh
+spring<span style="color:#f92672">.</span><span style="color:#a6e22e">mail</span><span style="color:#f92672">.</span><span style="color:#a6e22e">host</span><span style="color:#f92672">=</span>smtp<span style="color:#f92672">.</span><span style="color:#a6e22e">qq</span><span style="color:#f92672">.</span><span style="color:#a6e22e">com</span>
+spring<span style="color:#f92672">.</span><span style="color:#a6e22e">mail</span><span style="color:#f92672">.</span><span style="color:#a6e22e">properties</span><span style="color:#f92672">.</span><span style="color:#a6e22e">mail</span><span style="color:#f92672">.</span><span style="color:#a6e22e">smtp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ssl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enable</span><span style="color:#f92672">=</span><span style="color:#66d9ef">true</span>
+</code></pre></div><h3 id="4javamailsender">4.自动装配JavaMailSender</h3>
+<h3 id="5">5.测试邮件发送</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Autowired</span>
+	JavaMailSenderImpl javaMailSender<span style="color:#f92672">;</span>
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextLoads</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+		SimpleMailMessage message <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SimpleMailMessage<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//邮件设置
+</span><span style="color:#75715e"></span>		message<span style="color:#f92672">.</span><span style="color:#a6e22e">setSubject</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;通知-今晚开会&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		message<span style="color:#f92672">.</span><span style="color:#a6e22e">setText</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;今晚7:30开会&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		message<span style="color:#f92672">.</span><span style="color:#a6e22e">setTo</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;3146598925@qq.com&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		message<span style="color:#f92672">.</span><span style="color:#a6e22e">setFrom</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;2634984457@qq.com&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		javaMailSender<span style="color:#f92672">.</span><span style="color:#a6e22e">send</span><span style="color:#f92672">(</span>message<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#a6e22e">@Test</span>
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test02</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+		<span style="color:#75715e">//1.创建一个复杂的消息邮件
+</span><span style="color:#75715e"></span>		MimeMessage mimeMessage <span style="color:#f92672">=</span> javaMailSender<span style="color:#f92672">.</span><span style="color:#a6e22e">createMimeMessage</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		MimeMessageHelper helper <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MimeMessageHelper<span style="color:#f92672">(</span>mimeMessage<span style="color:#f92672">,</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		<span style="color:#75715e">//邮件设置
+</span><span style="color:#75715e"></span>		helper<span style="color:#f92672">.</span><span style="color:#a6e22e">setSubject</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;通知-今晚开会&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		helper <span style="color:#f92672">.</span><span style="color:#a6e22e">setText</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;&lt;b style=&#39;color:red&#39;&gt;今晚7:30开会&lt;/b&gt;&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">true</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+
+		helper <span style="color:#f92672">.</span><span style="color:#a6e22e">setTo</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;3146598925@qq.com&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		helper<span style="color:#f92672">.</span><span style="color:#a6e22e">setFrom</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;2634984457@qq.com&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		helper<span style="color:#f92672">.</span><span style="color:#a6e22e">addAttachment</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;1.jpg&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> File<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;D:\\images\\face1.jpeg&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+		javaMailSender<span style="color:#f92672">.</span><span style="color:#a6e22e">send</span><span style="color:#f92672">(</span>mimeMessage<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+</code></pre></div><h1 id="spring-boot-3">五、Spring Boot与安全</h1>
+<p>shiro、Spring Security</p>
+<h3 id="1springsecurity">1.引入SpringSecurity;</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">thymeleaf</span><span style="color:#f92672">.</span><span style="color:#a6e22e">extras</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>thymeleaf<span style="color:#f92672">-</span>extras<span style="color:#f92672">-</span>springsecurity4<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>thymeleaf<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>security<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+</code></pre></div><h3 id="2springsecurity">2.编写SpringSecurity的配置类；</h3>
+<p>@EnableWebSecurity  extends WebSecurityConfigurerAdapter {</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@EnableWebSecurity</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MySecurityConfig</span> <span style="color:#66d9ef">extends</span> WebSecurityConfigurerAdapter <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">configure</span><span style="color:#f92672">(</span>HttpSecurity http<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//super.configure(http);
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//定制请求的授权规则
+</span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">authorizeRequests</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">permitAll</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/level1/**&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">hasRole</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP1&#34;</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/level2/**&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">hasRole</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP2&#34;</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/level3/**&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">hasRole</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP3&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">//开启自动配置的登录功能，效果，如果没有登录，没有权限就回来到登录页面
+</span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">formLogin</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">usernameParameter</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;user&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">passwordParameter</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;pwd&#34;</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">loginPage</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/userlogin&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">//1./login来到登录页
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//2.重定向到/login?error表示登录失败
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//3.更多详细规定
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//4.默认post的形式的/login代表处理登陆
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//5.一旦定制loginPage；那么loginPage的post请求就是登录
+</span><span style="color:#75715e"></span>
+
+        <span style="color:#75715e">//开启自动配置的注销功能。
+</span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">logout</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">logoutSuccessUrl</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span><span style="color:#75715e">//注销成功以后来到首页
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//1.访问/logout表示用户注销，清空session
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//2.注销成功返回/login?logout 页面
+</span><span style="color:#75715e"></span>
+        <span style="color:#75715e">//开启记住我功能
+</span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">rememberMe</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">rememberMeParameter</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;remeber&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">//登录成功以后，将cookie发给浏览器保存，以后访问页面带上这个cookie，只要通过检查就可以免登录
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//点击注销会删除cookie
+</span><span style="color:#75715e"></span>        
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">//定义认证规则
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">configure</span><span style="color:#f92672">(</span>AuthenticationManagerBuilder auth<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//super.configure(auth);
+</span><span style="color:#75715e"></span>        auth<span style="color:#f92672">.</span><span style="color:#a6e22e">inMemoryAuthentication</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">withUser</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zhangsan&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">password</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;123456&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">roles</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP1&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;VIP2&#34;</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">and</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">withUser</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;lisi&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">password</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;123456&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">roles</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP2&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;VIP3&#34;</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">and</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">withUser</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;wangwu&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">password</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;123456&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">roles</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;VIP1&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;VIP3&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h3 id="3">3.控制请求的访问权限</h3>
+<h1 id="spring-boot-4">六、Spring Boot与分布式</h1>
+<p>分布式、Dubbo/Zookeeper、Spring Boot/Could</p>
+<h2 id="zookeeperdubbo">一、Zookeeper和Dubbo</h2>
+<p>==ZooKeeper==
+ZooKeeper 是一个分布式的，开放源码的分布式应用程序协调服务。它是一个为分布式应用提供一致性服务的软件，提供的功能包括：配置维护、域名服务、分布式同步、组服务等。</p>
+<p>==Dubbo==
+Dubbo是Alibaba开源的分布式服务框架，它最大的特点是按照分层的方式来架构，使用这种方式可以使各个层之间解耦合（或者最大限度地松耦合）。从服务模型的角度来看，Dubbo采用的是一种非常简单的模型，要么是提供方提供服务，要么是消费方消费服务，所以基于这一点可以抽象出服务提供方（Provider）和服务消费方（Consumer）两个角色。</p>
+<h3 id="1">1.将服务提供者注册到注册中心</h3>
+<h4 id="1dubbohe-zkclient">1.引入dubbohe zkClient相关依赖</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">alibaba</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>dubbo<span style="color:#f92672">-</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>0<span style="color:#f92672">.</span><span style="color:#a6e22e">1</span><span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span>引入zookeeper的客户端工具<span style="color:#f92672">-</span><span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span> https<span style="color:#f92672">:</span><span style="color:#75715e">//mvnrepository.com/artifact/com.github.sgroschupf/zkclient --&gt;
+</span><span style="color:#75715e"></span>		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">github</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sgroschupf</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>zkclient<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>0<span style="color:#f92672">.</span><span style="color:#a6e22e">1</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+</code></pre></div><h4 id="2dubbo">2.配置dubbo的扫描包和注册中心地址</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">dubbo<span style="color:#f92672">.</span><span style="color:#a6e22e">application</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">=</span>provider<span style="color:#f92672">-</span>ticket
+
+dubbo<span style="color:#f92672">.</span><span style="color:#a6e22e">registry</span><span style="color:#f92672">.</span><span style="color:#a6e22e">address</span><span style="color:#f92672">=</span>zookeeper<span style="color:#f92672">:</span><span style="color:#75715e">//192.168.16.108:2181
+</span><span style="color:#75715e"></span>
+dubbo<span style="color:#f92672">.</span><span style="color:#a6e22e">scan</span><span style="color:#f92672">.</span><span style="color:#a6e22e">base</span><span style="color:#f92672">-</span>packages<span style="color:#f92672">=</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">atguigu</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ticket</span><span style="color:#f92672">.</span><span style="color:#a6e22e">service</span>
+</code></pre></div><h4 id="3service">3.使用@Service发布服务</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> com.alibaba.dubbo.config.annotation.Service<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.stereotype.Component<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@Component</span>
+<span style="color:#a6e22e">@Service</span>  <span style="color:#75715e">//将服务发布出去
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TicketServiceImpl</span> <span style="color:#66d9ef">implements</span> TicketService <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getTicket</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;《西游记》&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="consumer-user">consumer-user</h3>
+<h4 id="1-1">1.引入依赖</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">alibaba</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>dubbo<span style="color:#f92672">-</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>0<span style="color:#f92672">.</span><span style="color:#a6e22e">1</span><span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span>引入zookeeper的客户端工具<span style="color:#f92672">-</span><span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span><span style="color:#f92672">-</span><span style="color:#f92672">-</span> https<span style="color:#f92672">:</span><span style="color:#75715e">//mvnrepository.com/artifact/com.github.sgroschupf/zkclient --&gt;
+</span><span style="color:#75715e"></span>		<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">github</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sgroschupf</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>zkclient<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>0<span style="color:#f92672">.</span><span style="color:#a6e22e">1</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+</code></pre></div><h4 id="2dubbo-1">2.配置dubbo的注册中心地址</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">dubbo<span style="color:#f92672">.</span><span style="color:#a6e22e">application</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">=</span>consumer<span style="color:#f92672">-</span>user
+
+dubbo<span style="color:#f92672">.</span><span style="color:#a6e22e">registry</span><span style="color:#f92672">.</span><span style="color:#a6e22e">address</span><span style="color:#f92672">=</span>zookeeper<span style="color:#f92672">:</span><span style="color:#75715e">//192.168.16.108:2181
+</span></code></pre></div><h4 id="3-1">3.应用服务</h4>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcZfJK1ONLRhs8HbD9gADX3gtilFSHeMghFYBBSOcEHYzLG3Odf5vpTkBQ7.7UCHP5KmEljp3HGitHuVdkduRIjc!/b&amp;bo=ZwHmAAAAAAADF7I!&amp;rf=viewer_4" alt="image-20200825190332225"></p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcZfJK1ONLRhs8HbD9gADX3hVBeFUtMi0wQPxyPm26YOAA8R8YFkF7Yqn9Pg*.nP18hr5VaK4KdSruWUBhWfKJy4!/b&amp;bo=uQGwAAAAAAADFzo!&amp;rf=viewer_4" alt="image-20200825190409260"></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> com.alibaba.dubbo.config.annotation.Reference<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> com.atguigu.ticket.service.TicketService<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.stereotype.Service<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@Service</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserService</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Reference</span>
+    TicketService ticketService<span style="color:#f92672">;</span>
+    
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">hello</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        String ticket <span style="color:#f92672">=</span> ticketService<span style="color:#f92672">.</span><span style="color:#a6e22e">getTicket</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;买到票了：&#34;</span><span style="color:#f92672">+</span>ticket<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="spring-bootspring-cloud">Spring Boot和Spring Cloud</h2>
+<h3 id="heading-5">注册中心</h3>
+<p>1.配置Eureka信息</p>
+<p>2.@EnableEurekaServer</p>
+<p>依赖</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>properties<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>1<span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>Edgware<span style="color:#f92672">.</span><span style="color:#a6e22e">SR3</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>properties<span style="color:#f92672">&gt;</span>
+	
+	<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>eureka<span style="color:#f92672">-</span>server<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+    <span style="color:#f92672">&lt;</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>dependencies<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>dependencies<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>$<span style="color:#f92672">{</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">}</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>type<span style="color:#f92672">&gt;</span>pom<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>type<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>scope<span style="color:#f92672">&gt;</span>import<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>scope<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencies<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+</code></pre></div><p>配置文件</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">server:
+  port<span style="color:#f92672">:</span> 8761
+eureka:
+  instance<span style="color:#f92672">:</span>
+    hostname<span style="color:#f92672">:</span> eureka<span style="color:#f92672">-</span>server      <span style="color:#960050;background-color:#1e0010">#</span>eureka实例的主机名
+  client<span style="color:#f92672">:</span>
+    register<span style="color:#f92672">-</span>with<span style="color:#f92672">-</span>eureka<span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>   <span style="color:#960050;background-color:#1e0010">#</span>不把自己注册到eureka上
+    fetch<span style="color:#f92672">-</span>registry<span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>         <span style="color:#960050;background-color:#1e0010">#</span>不从eureka上来获取服务的注册信息
+    service<span style="color:#f92672">-</span>url<span style="color:#f92672">:</span>
+      defaultZone<span style="color:#f92672">:</span> http<span style="color:#f92672">:</span><span style="color:#75715e">//localhost:8761/eureka/
+</span></code></pre></div><h3 id="1provider">1、创建provider</h3>
+<p>依赖：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">	<span style="color:#f92672">&lt;</span>properties<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>1<span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>Edgware<span style="color:#f92672">.</span><span style="color:#a6e22e">SR3</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>properties<span style="color:#f92672">&gt;</span>
+	
+	<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>eureka<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+    <span style="color:#f92672">&lt;</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>dependencies<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>dependencies<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>$<span style="color:#f92672">{</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">}</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>type<span style="color:#f92672">&gt;</span>pom<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>type<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>scope<span style="color:#f92672">&gt;</span>import<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>scope<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencies<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+</code></pre></div><p>配置文件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">server:
+  port<span style="color:#f92672">:</span> 8002
+spring:
+  application<span style="color:#f92672">:</span>
+    name<span style="color:#f92672">:</span> provider<span style="color:#f92672">-</span>ticket
+
+eureka:
+  instance<span style="color:#f92672">:</span>
+    prefer<span style="color:#f92672">-</span>ip<span style="color:#f92672">-</span>address<span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>   <span style="color:#960050;background-color:#1e0010">#</span>注册服务的时候使用服务的ip地址
+  client<span style="color:#f92672">:</span>
+    service<span style="color:#f92672">-</span>url<span style="color:#f92672">:</span>
+      defaultZone<span style="color:#f92672">:</span> http<span style="color:#f92672">:</span><span style="color:#75715e">//localhost:8761/eureka/
+</span><span style="color:#75715e"></span>
+</code></pre></div><p>操作类：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> org.springframework.stereotype.Service<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@Service</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TicketService</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getTicket</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;8002&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;《西游记》&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="2consumer">2、创建consumer</h3>
+<p>依赖：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">	<span style="color:#f92672">&lt;</span>properties<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sourceEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>UTF<span style="color:#f92672">-</span>8<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>project<span style="color:#f92672">.</span><span style="color:#a6e22e">reporting</span><span style="color:#f92672">.</span><span style="color:#a6e22e">outputEncoding</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>1<span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>java<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>Edgware<span style="color:#f92672">.</span><span style="color:#a6e22e">SR3</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>properties<span style="color:#f92672">&gt;</span>
+	
+	<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>eureka<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+
+    <span style="color:#f92672">&lt;</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span>dependencies<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">cloud</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>dependencies<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>version<span style="color:#f92672">&gt;</span>$<span style="color:#f92672">{</span>spring<span style="color:#f92672">-</span>cloud<span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">}</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>version<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>type<span style="color:#f92672">&gt;</span>pom<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>type<span style="color:#f92672">&gt;</span>
+				<span style="color:#f92672">&lt;</span>scope<span style="color:#f92672">&gt;</span>import<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>scope<span style="color:#f92672">&gt;</span>
+			<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span>
+		<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencies<span style="color:#f92672">&gt;</span>
+	<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependencyManagement<span style="color:#f92672">&gt;</span>
+</code></pre></div><p>配置文件：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">spring:
+  application<span style="color:#f92672">:</span>
+    name<span style="color:#f92672">:</span> consumer<span style="color:#f92672">-</span>user
+server:
+  port<span style="color:#f92672">:</span> 8200
+
+eureka:
+  instance<span style="color:#f92672">:</span>
+    prefer<span style="color:#f92672">-</span>ip<span style="color:#f92672">-</span>address<span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>   <span style="color:#960050;background-color:#1e0010">#</span>注册服务的时候使用服务的ip地址
+  client<span style="color:#f92672">:</span>
+    service<span style="color:#f92672">-</span>url<span style="color:#f92672">:</span>
+      defaultZone<span style="color:#f92672">:</span> http<span style="color:#f92672">:</span><span style="color:#75715e">//localhost:8761/eureka/
+</span></code></pre></div><p>操作类：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> org.springframework.beans.factory.annotation.Autowired<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.web.bind.annotation.GetMapping<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.web.bind.annotation.RestController<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.web.client.RestTemplate<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@RestController</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserController</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Autowired</span>
+    RestTemplate restTemplate<span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@GetMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/buy&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">buyTicket</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+        String s <span style="color:#f92672">=</span> restTemplate<span style="color:#f92672">.</span><span style="color:#a6e22e">getForObject</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;http://PROVIDER-TICKET/ticket&#34;</span><span style="color:#f92672">,</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> name<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;购买了&#34;</span><span style="color:#f92672">+</span>s<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>负载均衡：</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> org.springframework.boot.SpringApplication<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.boot.autoconfigure.SpringBootApplication<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.cloud.client.discovery.EnableDiscoveryClient<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.cloud.client.loadbalancer.LoadBalanced<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.context.annotation.Bean<span style="color:#f92672">;</span>
+<span style="color:#f92672">import</span> org.springframework.web.client.RestTemplate<span style="color:#f92672">;</span>
+
+<span style="color:#a6e22e">@EnableDiscoveryClient</span>  <span style="color:#75715e">//开启发现服务功能
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">@SpringBootApplication</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ConsumerUserApplication</span> <span style="color:#f92672">{</span>
+
+	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[</span><span style="color:#f92672">]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+		SpringApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">(</span>ConsumerUserApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> args<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+	<span style="color:#a6e22e">@LoadBalanced</span>  <span style="color:#75715e">//使用负载均衡机制
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">@Bean</span>
+	<span style="color:#66d9ef">public</span> RestTemplate <span style="color:#a6e22e">restTemplate</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">{</span>
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> RestTemplate<span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+	<span style="color:#f92672">}</span>
+
+<span style="color:#f92672">}</span>
+
+</code></pre></div><p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcZfJK1ONLRhs8HbD9gADX3jy0Z5w95Itt1MrVAV8ubjBchlFrJBCx4ck9i50QJxGd7lkUOD5PK0GOKlXFIyjxyk!/b&amp;bo=ZwdXAwAAAAADJzY!&amp;rf=viewer_4" alt="image-20200825211235882"></p>
+<h1 id="spring-boot-5">七、Spring Boot与开发热部署</h1>
+<h2 id="heading-6">一、热部署</h2>
+<p>​		在开发中我们修改一个Java文件后想看到效果不得不重启应用，这导致大量时间花费，我们希望不重启应用的情况下，程序可以自动部署（热部署）。有以下四种情况，如何能实现热部署。</p>
+<h3 id="1-2">1、模板引擎</h3>
+<p>​		在Spring Boot中开发情况下禁用模板引擎的cache，</p>
+<p>​		页面模板改变ctrl+F9可以重新编译当前页面并生效</p>
+<h3 id="2spring-loaded">2、Spring Loaded</h3>
+<p>Spring官方提供的热部署程序，实现修改类文件的热部署
+下载Spring Loaded（项目地址https://github.com/spring-projects/spring-loaded）
+添加运行时参数；
+-javaagent:C:/springloaded-1.2.5.RELEASE.jar –noverify</p>
+<h3 id="3jrebel">3、JRebel</h3>
+<p>收费的一个热部署软件
+安装插件使用即可</p>
+<h3 id="4spring-boot-devtools">4、Spring Boot Devtools（推荐）</h3>
+<p>引入依赖</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>  
+       <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>groupId<span style="color:#f92672">&gt;</span>  
+       <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>devtools<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>artifactId<span style="color:#f92672">&gt;</span>   
+<span style="color:#f92672">&lt;</span><span style="color:#f92672">/</span>dependency<span style="color:#f92672">&gt;</span> 
+
+</code></pre></div><p>IDEA使用ctrl+F9
+或做一些小调整</p>
+<h1 id="spring-boot-6">八、Spring Boot与监控管理</h1>
+<h2 id="heading-7">一、监控管理</h2>
+<p>​		通过引入spring-boot-starter-actuator，可以使用Spring Boot为我们提供的准生产环境下的应用监控和管理功能。我们可以通过HTTP，JMX，SSH协议来进行操作，自动得到审计、健康及指标信息等。</p>
+<p>步骤：
+引入spring-boot-starter-actuator
+通过http方式访问监控端点
+可进行shutdown（POST 提交，此端点默认关闭）</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x46i9nw/45NBuzDIW489QBoVep5mcWQtkr4Dzpk0vLWMf3okuvd*TMn*UaUQ2zfPLAKxD2vDUAbWoBHR3x32dB2fYn7eiFXq9gUvVFIfUWjNSoLmGXg!/b&amp;bo=VwRXAgAAAAADFzQ!&amp;rf=viewer_4" alt="image-20200826171658534"></p>
+<h2 id="heading-8">二、定制端点信息</h2>
+<p>定制端点一般通过endpoints+端点名+属性名来设置。
+修改端点id（endpoints.beans.id=mybeans）
+开启远程应用关闭功能（endpoints.shutdown.enabled=true）
+关闭端点（endpoints.beans.enabled=false）
+开启所需端点
+endpoints.enabled=false
+endpoints.beans.enabled=true
+定制端点访问根路径
+management.context-path=/manage
+关闭http端点
+management.port=-1</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">server<span style="color:#f92672">.</span><span style="color:#a6e22e">port</span><span style="color:#f92672">=</span>8081
+management<span style="color:#f92672">.</span><span style="color:#a6e22e">security</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">false</span>         
+
+info<span style="color:#f92672">.</span><span style="color:#a6e22e">app</span><span style="color:#f92672">.</span><span style="color:#a6e22e">id</span><span style="color:#f92672">=</span>hello
+info<span style="color:#f92672">.</span><span style="color:#a6e22e">app</span><span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">=</span>1<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">0</span>
+
+<span style="color:#960050;background-color:#1e0010">#</span>endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">metrics</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">false</span>
+endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">shutdown</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">true</span>
+
+endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">id</span><span style="color:#f92672">=</span>mybean
+endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">path</span><span style="color:#f92672">=</span><span style="color:#f92672">/</span>bean
+<span style="color:#960050;background-color:#1e0010">#</span>endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">false</span>
+
+endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">dump</span><span style="color:#f92672">.</span><span style="color:#a6e22e">path</span><span style="color:#f92672">=</span><span style="color:#f92672">/</span>du
+<span style="color:#960050;background-color:#1e0010">#</span>关闭所有端点访问
+<span style="color:#960050;background-color:#1e0010">#</span>endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">false</span>
+<span style="color:#960050;background-color:#1e0010">#</span>endpoints<span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">enabled</span><span style="color:#f92672">=</span><span style="color:#66d9ef">true</span>
+
+management<span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">-</span>path<span style="color:#f92672">=</span><span style="color:#f92672">/</span>manage
+
+management<span style="color:#f92672">.</span><span style="color:#a6e22e">port</span><span style="color:#f92672">=</span>8181
+</code></pre></div><h2 id="heading-9">自定义健康状态指示器</h2>
+<p>1.编写一个指示器 实现HealthIndicator 接口</p>
+<p>2.指示器的名字xxxHealthIndicator</p>
+<p>3.加入容器中</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyAppHealthIndicator</span> <span style="color:#66d9ef">implements</span> HealthIndicator <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Health <span style="color:#a6e22e">health</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+
+        <span style="color:#75715e">//自定义的检查方法
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//Health.up().build()代表健康
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> Health<span style="color:#f92672">.</span><span style="color:#a6e22e">down</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">withDetail</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;msg&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;服务异常&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">(</span><span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></article>
+    </section>
+
+    <footer class="ui attached segment dream-tags">
+      
+          <a class="ui label">No Tags</a>
+      
+      <div
+        class="ui label"
+        style="float: right; cursor: pointer;"
+        onclick="savePostAsImg()">
+        <i class="save icon"></i>Save as image
+      </div>
+    </footer>
+
+    
+
+    
+    
+    
+
+  </div>
+  <div class="sixteen wide mobile sixteen wide tablet four wide computer column">
+    <article class="dream-header">
+  <section class="ui top attached center aligned segment">
+    <div class="ui small circular image">
+      
+    </div>
+
+    
+    <h1 class="ui medium header">&#39;s blog<div class="sub header" style="margin-top: 0.5rem;"></div>
+    </h1>
+    
+
+    <div class="ui horizontal list">
+      
+      <a class="item" href="/tags">
+        <i class="tags icon" title="All Tags"></i>
+      </a>
+      <a class="item" href="/categories">
+        <i class="th list icon" title="All Categories"></i>
+      </a>
+    </div>
+  </section>
+
+  
+
+  
+
+  <section class="ui attached segment header-socials">
+    <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+  </section>
+
+  <section class="ui bottom attached center aligned segment">
+    
+      <p>© 2020 My New Hugo Site</p>
+    
+
+    <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</p>
+  </section>
+</article>
+
+  </div>
+</div>
+
+        </section>
+        <section class="back">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          <div class="ui centered relaxed grid dream-grid dream-back">
+  
+  
+  
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    <article>
+      <div class="ui top attached segment">
+        <h3 class="ui header">Social Links</h3>
+      </div>
+      <div class="ui attached segment">
+        <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+      </div>
+    </article>
+  </section>
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    
+  </section>
+
+  
+    
+  
+</div>
+
+        </section>
+      </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+<script src="/js/semantic.min.js"></script>
+<script src="/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/theme.js"></script>
+
+    
+<script src="/js/html2canvas.min.js"></script>
+<script src="/js/post.js"></script>
+
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '...', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    
+  </body>
+</html>

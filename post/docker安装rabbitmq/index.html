@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title> | My New Hugo Site</title>
+
+    
+
+
+
+<meta name="author" content="" />
+<meta name="description" content="" />
+
+
+
+<meta name="generator" content="Hugo 0.62.0" />
+
+<link rel="canonical" href="https:xiaohai001.github.io/post/docker%E5%AE%89%E8%A3%85rabbitmq/" />
+
+
+<meta property="og:title" content="" />
+<meta property="og:description" content="title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30&#43;08:00draft: truedocker安装rabbitmq：management出现问题：
+vim /etc/sysconfig/docker
+vim /etc/docker/daemon.json //修改配置文件，加上镜像加速器
+sudo systemctl daemon-reload //重新加载配置文件
+sudo systemctl restart docker //重启docker容器
+发现换哪个镜像加速度没用，还是原来的问题，可能就是网不行，找个网好的地方，就成功了，我就是，烦了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https:xiaohai001.github.io/post/docker%E5%AE%89%E8%A3%85rabbitmq/" />
+
+
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content=""/>
+<meta name="twitter:description" content="title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30&#43;08:00draft: truedocker安装rabbitmq：management出现问题：
+vim /etc/sysconfig/docker
+vim /etc/docker/daemon.json //修改配置文件，加上镜像加速器
+sudo systemctl daemon-reload //重新加载配置文件
+sudo systemctl restart docker //重启docker容器
+发现换哪个镜像加速度没用，还是原来的问题，可能就是网不行，找个网好的地方，就成功了，我就是，烦了。"/>
+
+
+<link rel="stylesheet" href="/css/semantic.min.css" />
+<link rel="stylesheet" href="/css/OverlayScrollbars.min.css" />
+<link rel="stylesheet" href="/css/site.css" />
+
+
+
+
+
+    
+<link rel="stylesheet" href="/css/github-markdown.css" />
+
+  </head>
+
+  
+  <body>
+  
+    <div class="flip-container">
+      <div class="flipper">
+        <section class="front">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          
+<div class="ui centered relaxed grid dream-grid">
+  <div class="sixteen wide mobile sixteen wide tablet twelve wide computer column markdown-body dream-single">
+
+    <section class="ui top attached segment" id="dream-save-post-as-img">
+      <header style="margin-top: 0 !important;">
+        <h1 class="ui large header">
+          
+          <div class="sub header">
+            @
+            
+              
+            
+            · Monday, Jan 1, 0001
+            · 1 minute read
+            · Update at Jan 1, 0001
+          </div>
+        </h1>
+      </header>
+
+      
+
+      <article style="margin-top: 2rem;"><pre><code>title: &quot;如何编写hugo日志&quot;
+date: 2019-12-24T16:58:30+08:00
+draft: true
+</code></pre><p>docker安装rabbitmq：management出现问题：</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x2c9TEf/ruAMsa53pVQWN7FLK88i5qLR4*8K*YDOWn90eEa.2owwhwhCa4s6Mu9rKs3FPYoqJB40kzZ8aGeq3at.pTbJ*XKEAllUIrjXqcqzmZvqHMc!/b&amp;bo=ZgevAQAAAAADB.0!&amp;rf=viewer_4" alt="image-20200812105420218"></p>
+<p>vim /etc/sysconfig/docker</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x2c9TEf/45NBuzDIW489QBoVep5mce2UGdfQd.SugOnp52*0rGzDD7kNSH.svqt5JxJfqwJXfVKbd2KPTHZ3qk*t973FYkzrwfLzwim7wFwefLPHUL0!/b&amp;bo=TAZpAgAAAAADJyM!&amp;rf=viewer_4" alt="image-20200812110330686"></p>
+<p>vim /etc/docker/daemon.json     //修改配置文件，加上镜像加速器</p>
+<p><img src="http://m.qpic.cn/psc?/V54St4tP2hcNX10nI1aO4D7D2x2c9TEf/45NBuzDIW489QBoVep5mce2UGdfQd.SugOnp52*0rGwHCGCMaaFdrzi9QKJJPPz19tJICwp8kxu60Yu3172ESKME31NTG5HqUrlaA9p8VuY!/b&amp;bo=BgNUAAAAAAADF2M!&amp;rf=viewer_4" alt="image-20200817161353150"></p>
+<p>sudo systemctl daemon-reload      //重新加载配置文件</p>
+<p>sudo systemctl restart docker       //重启docker容器</p>
+<p>发现换哪个镜像加速度没用，还是原来的问题，可能就是网不行，找个网好的地方，就成功了，我就是，烦了。</p>
+</article>
+    </section>
+
+    <footer class="ui attached segment dream-tags">
+      
+          <a class="ui label">No Tags</a>
+      
+      <div
+        class="ui label"
+        style="float: right; cursor: pointer;"
+        onclick="savePostAsImg()">
+        <i class="save icon"></i>Save as image
+      </div>
+    </footer>
+
+    
+
+    
+    
+    
+
+  </div>
+  <div class="sixteen wide mobile sixteen wide tablet four wide computer column">
+    <article class="dream-header">
+  <section class="ui top attached center aligned segment">
+    <div class="ui small circular image">
+      
+    </div>
+
+    
+    <h1 class="ui medium header">&#39;s blog<div class="sub header" style="margin-top: 0.5rem;"></div>
+    </h1>
+    
+
+    <div class="ui horizontal list">
+      
+      <a class="item" href="/tags">
+        <i class="tags icon" title="All Tags"></i>
+      </a>
+      <a class="item" href="/categories">
+        <i class="th list icon" title="All Categories"></i>
+      </a>
+    </div>
+  </section>
+
+  
+
+  
+
+  <section class="ui attached segment header-socials">
+    <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+  </section>
+
+  <section class="ui bottom attached center aligned segment">
+    
+      <p>© 2020 My New Hugo Site</p>
+    
+
+    <p>Powered by <a href="https://gohugo.io/" target="_blank">Hugo</a> with theme <a href="https://github.com/g1eny0ung/hugo-theme-dream" target="_blank">Dream</a>.</p>
+  </section>
+</article>
+
+  </div>
+</div>
+
+        </section>
+        <section class="back">
+          
+<nav class="ui secondary menu dream-menu">
+
+  <div class="item">
+    <i class="large link bullseye icon dream-flip-toggle" title="Flip it!"></i>
+  </div>
+  <div class="item">
+    <i class="large link home icon" title="Home" onclick="window.location.href = 'https:xiaohai001.github.io\/'"></i>
+  </div>
+  <div class="item">
+    <i class="large link icon theme-switch" onclick="themeSwitch()"></i>
+  </div>
+</nav>
+
+          <div class="ui centered relaxed grid dream-grid dream-back">
+  
+  
+  
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    <article>
+      <div class="ui top attached segment">
+        <h3 class="ui header">Social Links</h3>
+      </div>
+      <div class="ui attached segment">
+        <nav class="ui secondary menu dream-menu dream-socials">
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</nav>
+
+      </div>
+    </article>
+  </section>
+
+  <section class="sixteen wide mobile eight wide tablet four wide computer column dream-column">
+    
+  </section>
+
+  
+    
+  
+</div>
+
+        </section>
+      </div>
+    </div>
+
+    <script src="/js/jquery.min.js"></script>
+<script src="/js/semantic.min.js"></script>
+<script src="/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/js/header.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/theme.js"></script>
+
+    
+<script src="/js/html2canvas.min.js"></script>
+<script src="/js/post.js"></script>
+
+
+    
+      
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '...', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+    
+  </body>
+</html>
