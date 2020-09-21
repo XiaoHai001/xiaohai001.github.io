@@ -159,30 +159,7 @@
       </p>
     </div>
     <div class="description">
-      这篇文章是参照了B站UP主CodeSheep的视频经过修改而来（视频中是mac，我这边是win10）以及参照solakulo Windows如何编写hugo日志 需要的工具：   Typora:用于编写markdown文件（比如日志）
-  Git工具：用于执行命令。
-  hugo工具
-Git环境配置：   ​ 找到上面用户变量的Path，然后点击编辑
-​ 然后新建
-​ 然后添加上Git的bin的地址和git-core的地址，之后确定保存就行
-​	最后打开cmd输入git version查看是否配置成功
-hugo环境配置： 类似配置Git环境的方法。
-开始制作个人博客： 生成博客文件夹 cmd中操作语句: hugo new site myblog (生成文件夹为myblog,为你的hugo站点)
-浏览器进入：https://themes.gohugo.io/查看你想要的主题；然后进入
-​	复制下面这行代码（将主题下载到themes文件夹下）；cmd进入myblog目录：
-输入你复制好的代码；
-启动博客：
-hugo server -t m10c &ndash;buildDrafts
-新建blog.md（写日志的文本名称）博客文章：hugo new post/blog.md （最好是这样写，也可直接用markdown创建，但需要改头部）==但必须在post文件夹下==
-使用typora编写博客文章。
-title: &#34;如何编写hugo日志&#34; date: 2019-12-24T16:58:30+08:00 draft: true title中编写标题
-将个人博客部署到远端服务器（GitHub） 新建仓库；
-==Repository名字必须是自己昵称全小写（前面的）.github.io;==（这里我之前已经创建了的）
-然后点确定；
-cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot;https:xiaohai001.github.io/&rdquo; &ndash;buildDrafts
-进入public文件夹：cd public/
-命令：git init
-添加所有：git add .
+      
     </div>
   </div>
 
@@ -226,7 +203,10 @@ cmd 命令进入myblog输入命令：hugo &ndash;theme=m10c &ndash;baseUrl=&quot
       </p>
     </div>
     <div class="description">
-      title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30+08:00draft: truedocker安装rabbitmq：management出现问题：
+      title: &quot;如何编写hugo日志&quot;
+date: 2019-12-24T16:58:30+08:00
+draft: true
+docker安装rabbitmq：management出现问题：
 vim /etc/sysconfig/docker
 vim /etc/docker/daemon.json //修改配置文件，加上镜像加速器
 sudo systemctl daemon-reload //重新加载配置文件
@@ -275,28 +255,7 @@ sudo systemctl restart docker //重启docker容器
       </p>
     </div>
     <div class="description">
-      title: &ldquo;如何编写hugo日志&rdquo; date: 2019-12-24T16:58:30+08:00 draft: true
-**一、**Spring Boot 入门 该笔记为尚硅谷的老师笔记。
-1、Spring Boot 简介  简化Spring应用开发的一个框架；
-整个Spring技术栈的一个大整合；
-J2EE开发的一站式解决方案；
- 2、微服务 2014，martin fowler
-微服务：架构风格（服务微化）
-一个应用应该是一组小型服务；可以通过HTTP的方式进行互通；
-单体应用：ALL IN ONE
-微服务：每一个功能元素最终都是一个可独立替换和独立升级的软件单元；
-详细参照微服务文档
-3、环境准备 http://www.gulixueyuan.com/ 谷粒学院
-环境约束
-–jdk1.8：Spring Boot 推荐jdk1.7及以上；java version &ldquo;1.8.0_112&rdquo;
-–maven3.x：maven 3.3以上版本；Apache Maven 3.3.9
-–IntelliJIDEA2017：IntelliJ IDEA 2017.2.2 x64、STS
-–SpringBoot 1.5.9.RELEASE：1.5.9；
-统一环境；
-1、MAVEN设置； 给maven 的settings.xml配置文件的profiles标签添加
-&lt;profile&gt; &lt;id&gt;jdk-1.8&lt;/id&gt; &lt;activation&gt; &lt;activeByDefault&gt;true&lt;/activeByDefault&gt; &lt;jdk&gt;1.8&lt;/jdk&gt; &lt;/activation&gt; &lt;properties&gt; &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt; &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt; &lt;maven.compiler.compilerVersion&gt;1.8&lt;/maven.compiler.compilerVersion&gt; &lt;/properties&gt; &lt;/profile&gt; 2、IDEA设置 整合maven进来；
-4、Spring Boot HelloWorld 一个功能：
-浏览器发送hello请求，服务器接受请求并处理，响应Hello World字符串；
+     
     </div>
   </div>
 
@@ -340,9 +299,25 @@ J2EE开发的一站式解决方案；
       </p>
     </div>
     <div class="description">
-      title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30+08:00draft: trueSpringBoot之模板引擎 一、thymeleaf 在 pom.xml 中添加依赖
-&lt;dependencies&gt;......&lt;dependency&gt;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;&lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;&lt;/dependency&gt;&lt;/dependencies&gt;在 application.yml 文件中添加配置
-spring:thymeleaf:# 模板文件前缀prefix: classpath:/templates/# 模板文件后缀suffix: .html注：这些属性是 ThymeleafProperties 默认的配置,如果不需要变更的话可以不用配置。
+      title: &quot;如何编写hugo日志&quot;
+date: 2019-12-24T16:58:30+08:00
+draft: true
+SpringBoot之模板引擎 一、thymeleaf 在 pom.xml 中添加依赖
+&lt;dependencies&gt;
+......
+&lt;dependency&gt;
+&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+&lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;/dependencies&gt;
+在 application.yml 文件中添加配置
+spring:
+thymeleaf:
+# 模板文件前缀
+prefix: classpath:/templates/
+# 模板文件后缀
+suffix: .html
+注：这些属性是 ThymeleafProperties 默认的配置,如果不需要变更的话可以不用配置。
 ==所以在使用springboot与thymeleaf做项目是可以加个templates文件夹而不用配置其他东西== 查考：https://www.cnblogs.com/markLogZhu/p/11776505.html
 2）、如果定制错误响应： 1）、如何定制错误的页面； ​	1）、有模板引擎的情况下；error/状态码; 【将错误页面命名为 错误状态码.html 放在模板引擎文件夹里面的 error文件夹下】，发生此状态码的错误就会来到 对应的页面；
 ​	我们可以使用4xx和5xx作为错误页面的文件名来匹配这种类型的所有错误，精确优先（优先寻找精确的状态码.html）；
@@ -398,7 +373,10 @@ spring:thymeleaf:# 模板文件前缀prefix: classpath:/templates/# 模板�
       </p>
     </div>
     <div class="description">
-      title: &quot;如何编写hugo日志&quot;date: 2019-12-24T16:58:30+08:00draft: true一、缓存 Java Caching定义了5个核心接口，分别是CachingProvider, CacheManager, Cache, Entry
+      title: &quot;如何编写hugo日志&quot;
+date: 2019-12-24T16:58:30+08:00
+draft: true
+一、缓存 Java Caching定义了5个核心接口，分别是CachingProvider, CacheManager, Cache, Entry
 和 Expiry。
 • CachingProvider定义了创建、配置、获取、管理和控制多个CacheManager。一个应用可
 以在运行期访问多个CachingProvider。
@@ -409,7 +387,38 @@ CacheManager所拥有。
 • Entry是一个存储在Cache中的key-value对。
 • Expiry 每一个存储在Cache中的条目有一个定义的有效期。一旦超过这个时间，条目为过期
 的状态。一旦过期，条目将不可访问、更新和删除。缓存有效期可以通过ExpiryPolicy设置。
-搭建基本环境1.导入数据库文件，创建出department和employee表2.创建javaBean封装数据3.整合Mybatis操作数据库1.配置数据源信息2.使用注解版的mybatis；1）、@MapperScan指定需要扫描的mapper接口所在的包 二、快速体验缓存步骤：1.开启基于注解的缓存2、标注缓存注解即可@CacheAble@CacheEvict@CachePut默认使用的是ConcurrentMapCacheManager==ConcurrentMapCache;将数据保存在	ConcurrentMap&lt;Object, Object&gt;缓存的注解 ==@Cacheable注解== 将方法的运行结果进行缓存，以后再要相同的数据，直接从缓存中获取，不用调用方法CacheManager管理多个Cache组件的，对缓存的真正CRUD操作在cache组件中，每一个缓存组件有组件唯一一个名字，几个属性：cacheNames/values:指定缓存的名字；将方法的返回结果放在哪个缓存中，是数组的方式，可以指定多个缓存key:缓存数据使用的key；可以用它来指定。默认使用方法参数的值 1-方法的返回值编写SPELkey = &#34;id&#34;keyGenerator:key的生成器；可以自己指定key的生成器的组件idke/keyGenerator二选一cacheManager:指定缓存管理器；或者是cacheResolver指定获取解析器condition:指定符合条件的情况下才缓存；condition = &#34;#id&gt;0&#34;unless:否定缓存；当unless指定的条件为true，方法的返回值就不会被缓存；可以获取到结果进行判断unless = &#34;#result == null&#34;sync: 是否使用异步模式@param id@return@Cacheable(cacheNames = &#34;emp&#34;,key = &#34;#root.
+搭建基本环境
+1.导入数据库文件，创建出department和employee表
+2.创建javaBean封装数据
+3.整合Mybatis操作数据库
+1.配置数据源信息
+2.使用注解版的mybatis；
+1）、@MapperScan指定需要扫描的mapper接口所在的包 二、快速体验缓存
+步骤：
+1.开启基于注解的缓存
+2、标注缓存注解即可
+@CacheAble
+@CacheEvict
+@CachePut
+默认使用的是ConcurrentMapCacheManager==ConcurrentMapCache;将数据保存在	ConcurrentMap&lt;Object, Object&gt;
+缓存的注解 ==@Cacheable注解== 将方法的运行结果进行缓存，以后再要相同的数据，直接从缓存中获取，不用调用方法
+CacheManager管理多个Cache组件的，对缓存的真正CRUD操作在cache组件中，每一个缓存组件有组件唯一一个名字，
+几个属性：
+cacheNames/values:指定缓存的名字；将方法的返回结果放在哪个缓存中，是数组的方式，可以指定多个缓存
+key:缓存数据使用的key；可以用它来指定。默认使用方法参数的值 1-方法的返回值
+编写SPEL
+key = &#34;id&#34;
+keyGenerator:key的生成器；可以自己指定key的生成器的组件id
+ke/keyGenerator二选一
+cacheManager:指定缓存管理器；或者是cacheResolver指定获取解析器
+condition:指定符合条件的情况下才缓存；
+condition = &#34;#id&gt;0&#34;
+unless:否定缓存；当unless指定的条件为true，方法的返回值就不会被缓存；可以获取到结果进行判断
+unless = &#34;#result == null&#34;
+sync: 是否使用异步模式
+@param id
+@return
+@Cacheable(cacheNames = &#34;emp&#34;,key = &#34;#root.
     </div>
   </div>
 
@@ -457,7 +466,12 @@ CacheManager所拥有。
     <div class="description">
       虽然在浏览器上调试的时候显示的是post请求，但实际发送的put请求，
 springboot出错误Validation failed for object='employee&rsquo;. Error count: 1
-Whitelabel Error PageThis application has no explicit mapping for /error, so you are seeing this as a fallback.Thu Aug 16 17:03:27 CST 2018There was an unexpected error (type=Bad Request, status=400).Validation failed for object=&#39;employee&#39;. Error count: 1是数据格式出现了错误！！！
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+Thu Aug 16 17:03:27 CST 2018
+There was an unexpected error (type=Bad Request, status=400).
+Validation failed for object=&#39;employee&#39;. Error count: 1
+是数据格式出现了错误！！！
 提交的数据格式不对：生日：日期；
 2017-12-12；2017/12/12；2017.12.12；
 日期的格式化；SpringMVC将页面提交的值需要转换为指定的类型;
